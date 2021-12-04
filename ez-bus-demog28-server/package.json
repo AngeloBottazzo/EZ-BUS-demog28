@@ -1,0 +1,14 @@
+{
+  "name": "ez-bus-demog28-server",
+  "version": "1.0.0",
+  "description": "Demo del progetto EZ-Bus, lato server",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "G28",
+  "license": "ISC",
+  "dependencies": {
+    "express": "^4.17.1"
+  }
+}
