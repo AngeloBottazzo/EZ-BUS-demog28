@@ -93,7 +93,7 @@ methods: {
             telefono: this.telefono,
             data_nascita: this.data_nascita,
             data_partenza: this.data_viaggio + " " + this.ora_partenza,
-            data_arrivo: this.data_viaggio + " " + this.ora_partenza
+            data_arrivo: this.data_viaggio + " " + this.ora_partenza,
             stazione_partenza: this.stazione_partenza,
             stazione_arrivo: this.stazione_arrivo,
         })
