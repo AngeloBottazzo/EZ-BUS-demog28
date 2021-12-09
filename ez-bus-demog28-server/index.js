@@ -4,6 +4,9 @@ var bodyParser = require("body-parser");
 
 var app = Express();
 
+var cors = require('cors')
+app.use(cors())
+
 const dbcredentials = JSON.parse(fs.readFileSync('db-credentials.json'));
 
 var MongoClient = require("mongodb").MongoClient;
@@ -34,6 +37,20 @@ app.get('/stazioni', (request, response)=>{
 
         response.send(result);
     })
+})
+
+app.post('/biglietti', (request, response)=>{
+    database.collection("biglietti_acquistati").insertOne({
+        nome : request.body['name'],
+        cognome : request.body['cognome'],
+        telefono : request.body['telefono'],
+        data_nascita : request.body['data_nascita'],
+        stazione_partenza : request.body['stazione_partenza'],
+        stazione_arrivo : request.body['stazione_arrivo'],
+        data_partenza : request.body['data_partenza'],
+        data_arrivo : request.body['data_arrivo'],
+    });
+    response.statusCode(200);
 })
 
 
