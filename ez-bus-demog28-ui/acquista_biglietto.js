@@ -6,7 +6,7 @@ const acquista_biglietto={template:`
     <div class="mb-3">
         <label for="stazione_partenza" class="form-label">Stazione di partenza</label>
         
-        <select id="stazione_partenza" name="stazione_arrivo" class="form-select" aria-label="Stazione di partenza">
+        <select id="stazione_partenza" v-model="stazione_partenza" v-on:change="aggiornaViaggi()" class="form-select" aria-label="Stazione di partenza">
             <option v-for="stazione in stazioni" :value="stazione._id">{{stazione.name}}</option>
         </select>
     </div>
@@ -14,7 +14,7 @@ const acquista_biglietto={template:`
     <div class="mb-3">
         <label for="stazione_arrivo" class="form-label">Stazione di arrivo</label>
         
-        <select id="stazione_arrivo" name="stazione_arrivo" class="form-select" aria-label="Stazione di arrivo">
+        <select id="stazione_arrivo" v-model="stazione_arrivo" v-on:change="aggiornaViaggi()" class="form-select" aria-label="Stazione di arrivo">
             <option v-for="stazione in stazioni" :value="stazione._id">{{stazione.name}}</option>
         </select>
     </div>
@@ -22,42 +22,42 @@ const acquista_biglietto={template:`
     <div class="mb-3">
         <label for="data_viaggio" class="form-label">Data del viaggio</label>
         
-        <input type="date" id="data_viaggio" name="data_viaggio" :min="adesso.toISOString().substring(0, 10)" v-on:change="aggiornaPartenze()" class="form-control" aria-label="Data del viaggio"/>
+        <input type="date" id="data_viaggio" v-model="data_viaggio" :min="adesso.toISOString().substring(0, 10)" v-on:change="aggiornaViaggi()" class="form-control" aria-label="Data del viaggio"/>
     </div>
 
     <div class="mb-3">
         <label for="ora_partenza" class="form-label">Ora di partenza</label>
         
-        <select id="ora_partenza" name="ora_partenza" class="form-select" aria-label="Ora di partenza">
-            <option v-for="partenza in partenze" :value="partenza.ora_partenza_corsa">{{partenza.ora_partenza}}</option>
+        <select id="ora_partenza" v-model="ora_partenza" class="form-select" aria-label="Ora di partenza">
+            <option v-for="viaggio in viaggi" :value="viaggio._id">{{trovaOraFermataInViaggio(viaggio, stazione_partenza)}}</option>
         </select>
     </div>
 
     <div class="mb-3">
         <label for="nome" class="form-label">Nome</label>
         
-        <input type="text" id="nome" name="nome" class="form-control" aria-label="Nome"/>
+        <input type="text" id="nome" v-model="nome" class="form-control" aria-label="Nome"/>
     </div>
 
     <div class="mb-3">
         <label for="cognome" class="form-label">Cognome</label>
         
-        <input type="text" id="cognome" name="cognome" class="form-control" aria-label="Cognome"/>
+        <input type="text" id="cognome" v-model="cognome" class="form-control" aria-label="Cognome"/>
     </div>
 
     <div class="mb-3">
         <label for="telefono" class="form-label">Telefono</label>
         
-        <input type="tel" id="telefono" name="telefono" class="form-control" aria-label="Telefono"/>
+        <input type="tel" id="telefono" v-model="telefono" class="form-control" aria-label="Telefono"/>
     </div>
 
     <div class="mb-3">
         <label for="data_nascita" class="form-label">Data di nascita</label>
         
-        <input type="date" id="data_nascita" name="data_nascita" class="form-control" aria-label="Data di nascita"/>
+        <input type="date" id="data_nascita" v-model="data_nascita" class="form-control" aria-label="Data di nascita"/>
     </div>
 
-    <button type="button" @click="invioBiglietto()" class="btn btn-primary">
+    <button type="button" @click="inviaBiglietto()" class="btn btn-primary">
         Procedi
     </button>
 </div>
@@ -66,8 +66,16 @@ const acquista_biglietto={template:`
 data() {
     return {
         stazioni: [],
-        partenze: [],
-        adesso: new Date()
+        viaggi: [],
+        adesso: new Date(),
+        nome: '',
+        cognome: '',
+        data_nascita: '',
+        telefono: '',
+        stazione_partenza: '',
+        stazione_arrivo: '',
+        data_viaggio: '',
+        ora_partenza: ''
     }
 },
 methods: {
@@ -78,13 +86,20 @@ methods: {
                 console.log(this.stazioni);
             });
     },
-    aggiornaPartenze(){
-        this.partenze = [
-            {
-                ora_partenza_corsa:"09:00",
-                ora_partenza:"09:20",
-            },
-        ]
+    aggiornaViaggi(){
+        if(!(this.stazione_partenza && this.stazione_arrivo && this.data_viaggio))
+            return;
+
+        axios.get(variables.API_URL + "viaggi-tra-stazioni", {
+            params:{
+                data_viaggio: this.data_viaggio,
+                stazione_partenza: this.stazione_partenza,
+                stazione_arrivo: this.stazione_arrivo}
+        })
+        .then((response) => {
+            console.log(response);
+            this.viaggi = response.data;
+        });
     },
     inviaBiglietto(){
         axios.post(variables.API_URL + "biglietti", {
@@ -92,14 +107,17 @@ methods: {
             cognome: this.cognome,
             telefono: this.telefono,
             data_nascita: this.data_nascita,
-            data_partenza: this.data_viaggio + " " + this.ora_partenza,
-            data_arrivo: this.data_viaggio + " " + this.ora_partenza,
+            data_partenza: Date.parse(this.data_viaggio + " " + this.ora_partenza),
+            data_arrivo: Date.parse(this.data_viaggio + " " + this.ora_partenza),
             stazione_partenza: this.stazione_partenza,
             stazione_arrivo: this.stazione_arrivo,
         })
         .then((response) => {
             alert(response.data);
         });
+    },
+    trovaOraFermataInViaggio(viaggio, stazione){
+        return moment.utc(moment.duration(viaggio.stazioni.find(fermata=>fermata.stazione == stazione).ora).as('milliseconds')).format('HH:mm')
     }
 },
 mounted: function () {

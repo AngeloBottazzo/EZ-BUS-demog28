@@ -1,8 +1,9 @@
 const fs = require('fs');
 var Express = require("express");
-var bodyParser = require("body-parser");
 
 var app = Express();
+
+app.use(Express.json());
 
 var cors = require('cors')
 app.use(cors())
@@ -40,9 +41,10 @@ app.get('/stazioni', (request, response)=>{
 })
 
 app.post('/biglietti', (request, response)=>{
+    console.log(request.body);
     database.collection("biglietti_acquistati").insertOne({
-        nome : request.body['name'],
-        cognome : request.body['cognome'],
+        nome : request.body.nome,
+        cognome : request.body.cognome,
         telefono : request.body['telefono'],
         data_nascita : request.body['data_nascita'],
         stazione_partenza : request.body['stazione_partenza'],
@@ -50,10 +52,29 @@ app.post('/biglietti', (request, response)=>{
         data_partenza : request.body['data_partenza'],
         data_arrivo : request.body['data_arrivo'],
     });
-    response.statusCode(200);
+    response.sendStatus(200);
 })
 
 
-app.get('/cose/:numero', (request, response)=>{
-    response.send('parameter example ' + response.params.numero);
+app.get('/viaggi-tra-stazioni', (request, response)=>{
+    if(!('stazione_partenza' in request.query) || !('stazione_arrivo' in request.query) || !('data_viaggio' in request.query))
+    {
+        response.sendStatus(400);
+        return;
+    }
+    
+    potenzialiViaggi = database.collection("viaggi").find({}).toArray((error, potenzialiViaggi) => {
+        if (error) {
+            console.log(error);
+            response.sendStatus(500);
+        }
+
+        console.log(potenzialiViaggi);
+
+        response.send(
+            potenzialiViaggi.filter(viaggio => 
+                viaggio.stazioni.findIndex((fermata=>fermata.stazione == request.query.stazione_partenza)) < viaggio.stazioni.findIndex((fermata=>fermata.stazione == request.query.stazione_arrivo)))
+        )
+    })
+
 })
