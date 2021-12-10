@@ -28,7 +28,7 @@ const acquista_biglietto={template:`
     <div class="mb-3">
         <label for="ora_partenza" class="form-label">Ora di partenza</label>
         
-        <select id="ora_partenza" v-model="ora_partenza" class="form-select" aria-label="Ora di partenza">
+        <select id="ora_partenza" v-model="viaggio_scelto" class="form-select" aria-label="Ora di partenza">
             <option v-for="viaggio in viaggi" :value="viaggio._id">{{trovaOraFermataInViaggio(viaggio, stazione_partenza)}}</option>
         </select>
     </div>
@@ -75,15 +75,14 @@ data() {
         stazione_partenza: '',
         stazione_arrivo: '',
         data_viaggio: '',
-        ora_partenza: ''
+        viaggio_scelto: ''
     }
 },
 methods: {
     refreshData() {
         axios.get(variables.API_URL + "stazioni")
             .then((response) => {
-                this.stazioni = response.data;
-                console.log(this.stazioni);
+                this.stazioni = response.data
             });
     },
     aggiornaViaggi(){
@@ -97,7 +96,6 @@ methods: {
                 stazione_arrivo: this.stazione_arrivo}
         })
         .then((response) => {
-            console.log(response);
             this.viaggi = response.data;
         });
     },
@@ -107,8 +105,8 @@ methods: {
             cognome: this.cognome,
             telefono: this.telefono,
             data_nascita: this.data_nascita,
-            data_partenza: Date.parse(this.data_viaggio + " " + this.ora_partenza),
-            data_arrivo: Date.parse(this.data_viaggio + " " + this.ora_partenza),
+            data_viaggio: Date.parse(this.data_viaggio),
+            viaggio: this.viaggio_scelto,
             stazione_partenza: this.stazione_partenza,
             stazione_arrivo: this.stazione_arrivo,
         })

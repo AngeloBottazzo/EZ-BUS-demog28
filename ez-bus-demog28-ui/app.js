@@ -1,7 +1,8 @@
 const routes=[
     {path:'/home',component:home},
     {path:'/',component:home},
-    {path:'/acquista-biglietto',component:acquista_biglietto}
+    {path:'/acquista-biglietto',component:acquista_biglietto},
+    {path:'/biglietti-acquistati',component:biglietti_acquistati}
 ]
 
 const router=new VueRouter({
@@ -9,5 +10,10 @@ const router=new VueRouter({
 })
 
 const app = new Vue({
-    router
+    router,
+    methods: {
+        dataOraBreve(stringaISO){
+            return moment(stringaISO).format("DD/MM/YYYY HH:mm");
+        }
+    }
 }).$mount('#app')

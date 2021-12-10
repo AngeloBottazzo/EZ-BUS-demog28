@@ -1,5 +1,6 @@
 const fs = require('fs');
 var Express = require("express");
+const moment = require('moment');
 
 var app = Express();
 
@@ -11,6 +12,8 @@ app.use(cors())
 const dbcredentials = JSON.parse(fs.readFileSync('db-credentials.json'));
 
 var MongoClient = require("mongodb").MongoClient;
+var ObjectId = require("mongodb").ObjectId;
+const { resourceUsage } = require('process');
 var CONNECTION_STRING = "mongodb+srv://"+dbcredentials.username+":"+dbcredentials.password+"@cluster0.rrla8.mongodb.net/ezbusdev?retryWrites=true&w=majority"
 
 var DATABASE = "ezbusdev";
@@ -41,18 +44,82 @@ app.get('/stazioni', (request, response)=>{
 })
 
 app.post('/biglietti', (request, response)=>{
-    console.log(request.body);
     database.collection("biglietti_acquistati").insertOne({
         nome : request.body.nome,
         cognome : request.body.cognome,
         telefono : request.body['telefono'],
-        data_nascita : request.body['data_nascita'],
-        stazione_partenza : request.body['stazione_partenza'],
-        stazione_arrivo : request.body['stazione_arrivo'],
-        data_partenza : request.body['data_partenza'],
-        data_arrivo : request.body['data_arrivo'],
+        data_nascita : moment(request.body['data_nascita']).format("YYYY-MM-DD"),
+        viaggio : ObjectId(request.body['viaggio']),
+        data_viaggio : moment(request.body['data_viaggio']).format("YYYY-MM-DD"),
+        stazione_partenza : ObjectId(request.body['stazione_partenza']),
+        stazione_arrivo : ObjectId(request.body['stazione_arrivo'])
     });
     response.sendStatus(200);
+})
+
+function trovaFermataInViaggio(viaggio, stazione){
+    return viaggio.stazioni.find(fermata=>{
+        return fermata.stazione.toString() == stazione.toString()
+    })
+}
+
+app.get('/biglietti', (request, response)=>{
+    database.collection("biglietti_acquistati").aggregate(
+        [
+            {
+                $lookup: {
+                    from: 'viaggi',
+                    localField: 'viaggio',
+                    foreignField: '_id',
+                    as: 'info_viaggio'
+
+                }
+            },
+            {
+                $lookup: {
+                    from: 'stazioni',
+                    localField: 'stazione_partenza',
+                    foreignField: '_id',
+                    as: 'info_stazione_partenza'
+
+                }
+            },
+            {
+                $lookup: {
+                    from: 'stazioni',
+                    localField: 'stazione_arrivo',
+                    foreignField: '_id',
+                    as: 'info_stazione_arrivo'
+
+                }
+            },
+            {
+                $unwind: "$info_viaggio",
+            },
+            {
+                $unwind: "$info_stazione_partenza",
+            },
+            {
+                $unwind: "$info_stazione_arrivo",
+            }
+                
+        ]).toArray((error, result) => {
+                if (error) {
+            console.log(error);
+        }
+
+        let info_espanse = result.map((biglietto)=>{
+            let fermata_partenza = trovaFermataInViaggio(biglietto.info_viaggio, biglietto.stazione_partenza)
+            let fermata_arrivo = trovaFermataInViaggio(biglietto.info_viaggio, biglietto.stazione_arrivo)
+            return {...biglietto,
+                data_partenza : moment(biglietto.data_viaggio).add(moment.duration(fermata_partenza.ora)),
+                data_arrivo : moment(biglietto.data_viaggio).add(moment.duration(fermata_arrivo.ora)),
+            }
+        })
+
+
+        response.send(info_espanse);
+    })
 })
 
 
@@ -68,8 +135,6 @@ app.get('/viaggi-tra-stazioni', (request, response)=>{
             console.log(error);
             response.sendStatus(500);
         }
-
-        console.log(potenzialiViaggi);
 
         response.send(
             potenzialiViaggi.filter(viaggio => 
