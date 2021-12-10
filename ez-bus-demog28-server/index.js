@@ -4,6 +4,39 @@ const moment = require('moment');
 
 var app = Express();
 
+// modules to generate APIs documentation
+const swaggerJsDoc = require('swagger-jsdoc');
+const swaggerUi = require('swagger-ui-express');
+const swaggerOptions = {
+    swaggerDefinition: {
+        openapi: '3.0.0',
+        info: {
+            title: 'EZ-BUS',
+            version: '1.0.0',
+            description:
+                'Queste sono API per la gestione dei biglietti.',
+            license: {
+                name: 'Licensed Under MIT',
+                url: 'https://spdx.org/licenses/MIT.html',
+            },
+            contact: {
+                name: 'Group28',
+                url: 'http://localhost:8081',
+            },
+        },
+        servers: [
+            {
+                url: 'http://localhost:8081/',
+                description: 'Development server',
+            },
+        ],
+    },
+    apis: ["index.js"]
+};
+
+const swaggerDocs = swaggerJsDoc(swaggerOptions);
+app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocs));
+
 app.use(Express.json());
 
 var cors = require('cors')
@@ -28,10 +61,49 @@ app.listen(8081, ()=>{
     console.log("server running");
 });
 
+/**
+ * @swagger
+ * /:
+ *  get:
+ *   summary: Home page della gestione biglietti
+ *   description: home page contenente due pulsanti per scegliere l'azione da svolgere
+ *   responses:
+ *    200:
+ *      description: bottone1 -> Acquista nuovo biglietto, bottone2 -> Acquista nuovo biglietto.
+ */
+
 app.get('/', (request, response)=>{
     response.send('Home');
 })
 
+/**
+ * @swagger
+ * /stazioni:
+ *  get:
+ *   summary: Lista delle stazioni
+ *   description: vengono mostrate tutte le stazioni all'interno del database
+ *   responses:
+ *    200:
+ *     description: Una lista di stazione.
+ *     content:
+ *      application/json:
+ *       schema:
+ *        type: object
+ *        properties:
+ *         data:
+ *          type: array
+ *          items:
+ *           type: object
+ *           properties:
+ *            _id:
+ *             type: string
+ *             description: ID della stazione
+ *             example: 61ab9a5fe757bd523db4e9ba 
+ *            name: 
+ *             type: string
+ *             description: Nome della stazione
+ *             example: Strigno
+ */
 app.get('/stazioni', (request, response)=>{
     
     database.collection("stazioni").find({}).toArray((error, result) => {
