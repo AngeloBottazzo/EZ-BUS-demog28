@@ -7,7 +7,7 @@ const acquista_biglietto={template:`
         <label for="stazione_partenza" class="form-label">Stazione di partenza</label>
         
         <select id="stazione_partenza" v-model="stazione_partenza" v-on:change="aggiornaViaggi()" class="form-select" aria-label="Stazione di partenza">
-            <option v-for="stazione in stazioni" :value="stazione._id">{{stazione.name}}</option>
+            <option v-for="stazione in stazioni" :value="stazione._id">{{stazione.nome}}</option>
         </select>
     </div>
 
@@ -15,7 +15,7 @@ const acquista_biglietto={template:`
         <label for="stazione_arrivo" class="form-label">Stazione di arrivo</label>
         
         <select id="stazione_arrivo" v-model="stazione_arrivo" v-on:change="aggiornaViaggi()" class="form-select" aria-label="Stazione di arrivo">
-            <option v-for="stazione in stazioni" :value="stazione._id">{{stazione.name}}</option>
+            <option v-for="stazione in stazioni" :value="stazione._id">{{stazione.nome}}</option>
         </select>
     </div>
 
@@ -29,7 +29,7 @@ const acquista_biglietto={template:`
         <label for="ora_partenza" class="form-label">Ora di partenza</label>
         
         <select id="ora_partenza" v-model="viaggio_scelto" class="form-select" aria-label="Ora di partenza">
-            <option v-for="viaggio in viaggi" :value="viaggio._id">{{trovaOraFermataInViaggio(viaggio, stazione_partenza)}}</option>
+            <option :disabled="viaggio.posti_disponibili<=0" v-for="viaggio in viaggi" :value="viaggio._id">{{mostraDurataInModoBello(viaggio.fermate[viaggio.index_partenza].ora)}} - {{viaggio.posti_disponibili}} posti</option>
         </select>
     </div>
 
@@ -75,7 +75,8 @@ data() {
         stazione_partenza: '',
         stazione_arrivo: '',
         data_viaggio: '',
-        viaggio_scelto: ''
+        viaggio_scelto: '',
+        richiesta_viaggi: 0,
     }
 },
 methods: {
@@ -86,9 +87,18 @@ methods: {
             });
     },
     aggiornaViaggi(){
+        this.viaggi = []
+        
         if(!(this.stazione_partenza && this.stazione_arrivo && this.data_viaggio))
             return;
+        
+        let data_viaggio = moment(this.data_viaggio)
 
+        if(!data_viaggio.isValid() || data_viaggio.startOf('day').isBefore(moment().startOf('day'))){
+            return;
+        }
+
+        let richiesta_viaggi_ora = ++this.richiesta_viaggi;    
         axios.get(variables.API_URL + "viaggi-tra-stazioni", {
             params:{
                 data_viaggio: this.data_viaggio,
@@ -96,7 +106,10 @@ methods: {
                 stazione_arrivo: this.stazione_arrivo}
         })
         .then((response) => {
-            this.viaggi = response.data;
+            if(this.richiesta_viaggi == richiesta_viaggi_ora){
+                console.log(response)
+                this.viaggi = response.data;
+            }
         });
     },
     inviaBiglietto(){
@@ -112,10 +125,14 @@ methods: {
         })
         .then((response) => {
             alert(response.data);
-        });
+        })
+        .catch((error)=>{
+            alert(error.response.data ?? error)
+        }
+        );
     },
-    trovaOraFermataInViaggio(viaggio, stazione){
-        return moment.utc(moment.duration(viaggio.stazioni.find(fermata=>fermata.stazione == stazione).ora).as('milliseconds')).format('HH:mm')
+    mostraDurataInModoBello(durata){
+        return moment.utc(moment.duration(durata).asMilliseconds()).format("HH:mm")
     }
 },
 mounted: function () {

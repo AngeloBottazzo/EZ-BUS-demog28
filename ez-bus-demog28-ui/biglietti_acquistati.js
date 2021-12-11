@@ -9,8 +9,8 @@ const biglietti_acquistati = {
             <div v-for="biglietto in biglietti" class="col col-12 col-lg-6 px-2 p-2">
                 <div class="card">
                     <div class="card-body">
-                        {{biglietto.info_stazione_partenza.name}}: {{ $root.dataOraBreve(biglietto.data_partenza) }} <br>
-                        {{biglietto.info_stazione_arrivo.name}}: {{ $root.dataOraBreve(biglietto.data_arrivo) }} <br>
+                        {{biglietto.info_stazione_partenza.nome}}: {{ $root.dataOraBreve(biglietto.data_partenza) }} <br>
+                        {{biglietto.info_stazione_arrivo.nome}}: {{ $root.dataOraBreve(biglietto.data_arrivo) }} <br>
                         svariati euro
                     </div>
                 </div>
