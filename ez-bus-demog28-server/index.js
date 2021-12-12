@@ -121,8 +121,8 @@ app.get('/stazioni', (request, response) => {
  *   post:
  *    requestBody:
  *     required: true
- *    summary: Biglietto richiesto
- *    description: viene restituito il biglietto in base alla scelta
+ *    summary: Aggiunta biglietto richiesto
+ *    description: viene inserito il nuovo biglietto scelto nella lista di biglietti acquistati
  *    responses:
  *     200:
  *      description: il biglietto scelto in base al form compilato
@@ -215,7 +215,57 @@ function trovaIndiceFermataInViaggio(viaggio, stazione) {
         return fermata.stazione.toString() == stazione.toString()
     })
 }
-
+/**
+ * @swagger
+ * /biglietti:
+ *  get:
+ *   summary: Lista di biglietti
+ *   description: viene mostrata la lista di tutti i biglietti acquistati precendetemente
+ *   responses:
+ *    200:
+ *     description: lista di biglietti acquistati precedentemente
+ *     content:
+ *      application/json:
+ *       schema:
+ *        type: object
+ *        properties:
+ *          BigliettiAcquistati:
+ *           type: array
+ *           items:
+ *            type: object
+ *            properties:
+ *             _id:
+ *              type: ObjectId
+ *              description: ID del biglietto
+ *              example: 61b3f74b98111ddceb4b78a0
+ *             viaggio:
+ *              type: ObjectId
+ *              description: ID del viaggio
+ *              example: 61b3f64ece9723f367f3a842
+ *             data_viaggio:
+ *              type: string
+ *              description: data del viaggio
+ *              example: 2001-03-23
+ *             stazione_partenza:
+ *              type: ObjectId
+ *              description: ID della stazione
+ *              example: 61ab9eb31e607d0f2cce7c58
+ *             stazione_arrivo:
+ *              type: ObjectId
+ *              description: ID della stazione
+ *              example: 61aba0b31e607d0f2cce7c68
+ *             intestatario:
+ *              properties:
+ *               name:
+ *                type: string
+ *                description: nome intestatario del biglietto
+ *                example: Cavallin
+ *               cognome:
+ *                type: string
+ *                description: cognome intestatario del biglietto
+ *                example: Pestino 
+ *             
+ */ 
 app.get('/biglietti', (request, response) => {
     database.collection("biglietti_acquistati").aggregate(
         [
