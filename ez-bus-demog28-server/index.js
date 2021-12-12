@@ -156,11 +156,11 @@ app.get('/stazioni', (request, response) => {
  *            name:
  *             type: string
  *             description: nome intestatario del biglietto
- *             example: Cavallin
+ *             example: Gino
  *            cognome:
  *             type: string
  *             description: cognome intestatario del biglietto
- *             example: Pestino
+ *             example: Pastino
  *     
  *     400:
  *      description: errore per dati non completi, dati non validi, viaggio non valido
@@ -259,11 +259,11 @@ function trovaIndiceFermataInViaggio(viaggio, stazione) {
  *               name:
  *                type: string
  *                description: nome intestatario del biglietto
- *                example: Cavallin
+ *                example: Gino
  *               cognome:
  *                type: string
  *                description: cognome intestatario del biglietto
- *                example: Pestino 
+ *                example: Pastino 
  *             
  */ 
 app.get('/biglietti', (request, response) => {
