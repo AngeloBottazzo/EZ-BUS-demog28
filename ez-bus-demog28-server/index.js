@@ -326,7 +326,79 @@ app.get('/biglietti', (request, response) => {
         })
 })
 
-
+/** 
+ * @swagger
+ * /viaggi-tra-stazioni:
+ *  get:
+ *   requestBody:
+ *     required: true
+ *   summary: Scelta del viaggio
+ *   description: fornisce il viaggio corretto da percorrere dopo aver scelto una stazione di partenza, una di arrivo e la data di partenza
+ *   responses:
+ *    200:
+ *     description: ritorna il viaggio tra le due stazioni corretto
+ *     content:
+ *       application/json:
+ *        schema:
+ *         type: object
+ *         properties:
+ *          _id:
+ *           type: ObjectId
+ *           description: Id del viaggio
+ *           example: 61b3f64ece9723f367f3a845 
+ *          nome_linea:
+ *           type: string
+ *           description: nome della linea
+ *           example: Trento – Primolano
+ *          giorni:
+ *            properties:
+ *             Monday:
+ *              type: boolean
+ *              example: true
+ *             Tuesday:
+ *              type: boolean
+ *              example: true
+ *             Wednesday:
+ *              type: boolean
+ *              example: true
+ *             Thursday:
+ *              type: boolean
+ *              example: true
+ *             Friday:
+ *              type: boolean
+ *              example: true
+ *             Saturday:
+ *              type: boolean
+ *              example: false
+ *             Sunday:
+ *              type: boolean
+ *              example: true
+ *          posti:
+ *           type: Int32
+ *           description: numero di posti disponibili per viaggio
+ *           example: 5
+ *          fermate: 
+ *            type: array
+ *            items:
+ *               type: object
+ *               properties:
+ *                stazione:
+ *                 type: ObjectId
+ *                 description: Id della stazione passata
+ *                 example: 61ab9eb31e607d0f2cce7c58   
+ *                ora:
+ *                 type: string
+ *                 description: orario di partenza
+ *                 example: PT5H
+ *                distanza:
+ *                 type: Int32
+ *                 description: distanza tra stazioni
+ *                 example: 0
+ *    400:
+ *     description: problema generato dalla non presenza dei dati richiesti, oppure data non valida
+ *    500:
+ *     description: problema generato dall'errore nel reperire i viaggi possibili dalla stazione di partenza
+ */
 app.get('/viaggi-tra-stazioni', (request, response) => {
     let data_viaggio = moment(request.query.data_viaggio)
     if (!('stazione_partenza' in request.query) || !('stazione_arrivo' in request.query) || !data_viaggio.isValid()) {
