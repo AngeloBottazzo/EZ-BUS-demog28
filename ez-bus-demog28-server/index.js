@@ -74,7 +74,7 @@ app.listen(8081, () => {
  */
 
 app.get('/', (request, response)=>{
-    response.send('Home');
+    response.send('Questo è il server delle api 🐝');
 })
 
 /**
