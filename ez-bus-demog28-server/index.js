@@ -402,7 +402,8 @@ app.get('/biglietti', (request, response) => {
 app.get('/viaggi-tra-stazioni', (request, response) => {
     let data_viaggio = moment(request.query.data_viaggio)
     if (!('stazione_partenza' in request.query) || !('stazione_arrivo' in request.query) || !data_viaggio.isValid()) {
-        response.sendStatus(400);
+        response.status(400);
+        response.send("Dati non completi")
         return;
     }
 
