@@ -60,7 +60,7 @@ const acquista_biglietto={template:`
         <input type="date" id="data_nascita" v-model="data_nascita" class="form-control" aria-label="Data di nascita"/>
     </div>
 
-    <button type="button" @click="inviaBiglietto()" class="btn btn-primary">
+    <button :disabled="!(viaggio_scelto && nome!='' && cognome != '' )" type="button" @click="inviaBiglietto()" class="btn btn-primary">
         Procedi
     </button>
 </div>
@@ -81,7 +81,7 @@ data() {
         viaggio_scelto: '',
         richiesta_viaggi: 0,
         statoData: '',
-        statoViaggi: 'Seleziona prima le stazioni e la data del viaggio.',
+        statoViaggi: 'Seleziona prima le stazioni e la data del viaggio.'
     }
 },
 methods: {
@@ -137,7 +137,7 @@ methods: {
             stazione_arrivo: this.stazione_arrivo,
         })
         .then((response) => {
-            alert(response.data);
+            router.push('/biglietti-acquistati')
         })
         .catch((error)=>{
             alert(error.response.data ?? error)
