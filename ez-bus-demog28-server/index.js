@@ -79,9 +79,6 @@ app.get('/', (request, response)=>{
  *     content:
  *      application/json:
  *       schema:
- *        type: object
- *        properties:
- *         array_stazioni:
  *          type: array
  *          items:
  *           type: object
@@ -217,9 +214,6 @@ function trovaIndiceFermataInViaggio(viaggio, stazione) {
  *     content:
  *      application/json:
  *       schema:
- *        type: object
- *        properties:
- *          BigliettiAcquistati:
  *           type: array
  *           items:
  *            type: object
@@ -330,9 +324,6 @@ app.get('/biglietti', (request, response) => {
  *     content:
  *       application/json:
  *        schema:
- *         type: object
- *         properties:
- *          viaggi-tra-stazioni:
  *           type: array
  *           items:
  *            type: object
