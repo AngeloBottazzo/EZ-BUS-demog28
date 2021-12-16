@@ -46,7 +46,7 @@ app.use(cors())
 const dbcredentials = JSON.parse(fs.readFileSync('db-credentials.json'));
 
 var MongoClient = require("mongodb").MongoClient;
-var ObjectId = require("mongodb").ObjectId;
+var string = require("mongodb").string;
 const { urlencoded } = require('express');
 var CONNECTION_STRING = "mongodb+srv://" + dbcredentials.username + ":" + dbcredentials.password + "@cluster0.rrla8.mongodb.net/ezbusdev?retryWrites=true&w=majority"
 
@@ -84,7 +84,7 @@ app.get('/', (request, response)=>{
  *         type: object
  *         properties:
  *          _id:
- *           type: ObjectId
+ *           type: string
  *           description: ID della stazione
  *           example: 61ab9a5fe757bd523db4e9ba 
  *          name: 
@@ -108,64 +108,36 @@ app.get('/stazioni', (request, response) => {
  *   post:
  *    requestBody:
  *     required: true
- *    summary: Aggiunta biglietto richiesto
- *    description: viene inserito il nuovo biglietto scelto nella lista di biglietti acquistati
- *    parameters:
- *     schema:
- *     - in: body 
- *       coso: object
- *       properties:
- *        stazione_partenza:
- *          type: ObjectId
- *          description: ID della stazione
- *        stazione_arrivo:
- *          type: ObjectId
- *          description: ID della stazione
- *        _id_viaggio:
- *         type: ObjectId
- *        nome:
- *         type: string
- *        cognome:
- *         type: string 
- *    responses:
- *     200:
- *      description: il biglietto scelto in base al form compilato
- *      content:
+ *     content:
  *       application/json:
  *        schema:
  *         type: object
  *         properties:
- *          _id:
- *           type: ObjectId
- *           description: ID del biglietto
- *           example: 61b3f74b98111ddceb4b78a0
- *          viaggio:
- *           type: ObjectId
- *           description: ID del viaggio
- *           example: 61b3f64ece9723f367f3a842
- *          data_viaggio:
- *           type: string
- *           description: data del viaggio
- *           example: 2001-03-23
  *          stazione_partenza:
- *           type: ObjectId
+ *           type: string
  *           description: ID della stazione
  *           example: 61ab9eb31e607d0f2cce7c58
  *          stazione_arrivo:
- *           type: ObjectId
+ *           type: string
  *           description: ID della stazione
  *           example: 61aba0b31e607d0f2cce7c68
- *          intestatario:
- *           properties:
- *            name:
- *             type: string
- *             description: nome intestatario del biglietto
- *             example: Gino
- *            cognome:
- *             type: string
- *             description: cognome intestatario del biglietto
- *             example: Pastino
- *     
+ *          viaggio:
+ *           type: string
+ *           example: 61b3f64ece9723f367f3a842
+ *          nome:
+ *           type: string
+ *           example: Gino
+ *          cognome:
+ *           type: string
+ *           example: Pastino
+ *    summary: Aggiunta biglietto richiesto
+ *    description: viene inserito il nuovo biglietto scelto nella lista di biglietti acquistati
+ *    responses:
+ *     200:
+ *      description: il biglietto scelto in base al form compilato
+ *      content:
+ *       text/plain:
+ *        example: OK 
  *     400:
  *      description: errore per dati non completi, dati non validi, viaggio non valido
  */
@@ -184,9 +156,9 @@ app.post('/biglietti', (request, response) => {
     }
 
     if(!database.collection("viaggi").findOne({
-        _id : ObjectId(request.body.viaggio),
-        fermate : { $elemMatch: {stazione : ObjectId(request.query.stazione_partenza)}},
-        fermate : { $elemMatch: {stazione : ObjectId(request.query.stazione_arrivo)}}
+        _id : String(request.body.viaggio),
+        fermate : { $elemMatch: {stazione : String(request.query.stazione_partenza)}},
+        fermate : { $elemMatch: {stazione : String(request.query.stazione_arrivo)}}
     })){
         response.status(400)
         response.send("Viaggio non valido")
@@ -194,10 +166,10 @@ app.post('/biglietti', (request, response) => {
     }
 
     database.collection("biglietti_acquistati").insertOne({
-        viaggio: ObjectId(request.body.viaggio),
+        viaggio: String(request.body.viaggio),
         data_viaggio: data_viaggio.format("YYYY-MM-DD"),
-        stazione_partenza: ObjectId(request.body.stazione_partenza),
-        stazione_arrivo: ObjectId(request.body.stazione_arrivo),
+        stazione_partenza: String(request.body.stazione_partenza),
+        stazione_arrivo: String(request.body.stazione_arrivo),
         intestatario : {
             nome: request.body.nome,
             cognome: request.body.cognome,
@@ -236,11 +208,11 @@ function trovaIndiceFermataInViaggio(viaggio, stazione) {
  *            type: object
  *            properties:
  *             _id:
- *              type: ObjectId
+ *              type: string
  *              description: ID del biglietto
  *              example: 61b3f74b98111ddceb4b78a0
  *             viaggio:
- *              type: ObjectId
+ *              type: string
  *              description: ID del viaggio
  *              example: 61b3f64ece9723f367f3a842
  *             data_viaggio:
@@ -248,11 +220,11 @@ function trovaIndiceFermataInViaggio(viaggio, stazione) {
  *              description: data del viaggio
  *              example: 2001-03-23
  *             stazione_partenza:
- *              type: ObjectId
+ *              type: string
  *              description: ID della stazione
  *              example: 61ab9eb31e607d0f2cce7c58
  *             stazione_arrivo:
- *              type: ObjectId
+ *              type: string
  *              description: ID della stazione
  *              example: 61aba0b31e607d0f2cce7c68
  *             intestatario:
@@ -331,13 +303,30 @@ app.get('/biglietti', (request, response) => {
  * @swagger
  * /viaggi-tra-stazioni:
  *  get:
- *   requestBody:
- *     required: true
+ *   parameters:
+ *    - in: query
+ *      name: stazione_partenza
+ *      schema:
+ *       type: string
+ *      example: 61ab9eb31e607d0f2cce7c5a
+ *      required: true
+ *    - in: query
+ *      name: stazione_arrivo
+ *      schema:
+ *       type: string
+ *      example: 61aba0761e607d0f2cce7c65
+ *      required: true
+ *    - in: query
+ *      name: data_viaggio
+ *      schema:
+ *       type: string
+ *      example: 2021-12-23
+ *      required: true
  *   summary: Scelta del viaggio
  *   description: fornisce il viaggio corretto da percorrere dopo aver scelto una stazione di partenza, una di arrivo e la data di partenza
  *   responses:
  *    200:
- *     description: ritorna il viaggio tra le due stazioni corretto
+ *     description: ritorna i viaggi possibili tra le due stazioni nel giorno scelto
  *     content:
  *       application/json:
  *        schema:
@@ -346,7 +335,7 @@ app.get('/biglietti', (request, response) => {
  *            type: object
  *            properties:
  *             _id:
- *              type: ObjectId
+ *              type: string
  *              description: Id del viaggio
  *              example: 61b3f64ece9723f367f3a845 
  *             nome_linea:
@@ -386,7 +375,7 @@ app.get('/biglietti', (request, response) => {
  *                  type: object
  *                  properties:
  *                   stazione:
- *                    type: ObjectId
+ *                    type: string
  *                    description: Id della stazione passata
  *                    example: 61ab9eb31e607d0f2cce7c58   
  *                   ora:
@@ -418,7 +407,7 @@ app.get('/viaggi-tra-stazioni', (request, response) => {
     
     potenzialiViaggi = database.collection("viaggi").find({
         ["giorni." + data_viaggio.format("dddd")] : true,
-        fermate : { $elemMatch: {stazione : ObjectId(request.query.stazione_partenza)}}
+        fermate : { $elemMatch: {stazione : String(request.query.stazione_partenza)}}
     }).toArray(async (error, tuttiViaggi) => {
         if (error) {
             console.log(error);
