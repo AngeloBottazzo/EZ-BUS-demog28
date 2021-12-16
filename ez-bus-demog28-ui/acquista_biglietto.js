@@ -23,14 +23,17 @@ const acquista_biglietto={template:`
         <label for="data_viaggio" class="form-label">Data del viaggio</label>
         
         <input type="date" id="data_viaggio" v-model="data_viaggio" :min="adesso.toISOString().substring(0, 10)" v-on:change="aggiornaViaggi()" class="form-control" aria-label="Data del viaggio"/>
+        <div class="text-red" v-if="statoData"><small>{{statoData}}</small></div>
     </div>
 
     <div class="mb-3">
         <label for="ora_partenza" class="form-label">Ora di partenza</label>
         
-        <select id="ora_partenza" v-model="viaggio_scelto" class="form-select" aria-label="Ora di partenza">
-            <option :disabled="viaggio.posti_disponibili<=0" v-for="viaggio in viaggi" :value="viaggio._id">{{mostraDurataInModoBello(viaggio.fermate[viaggio.index_partenza].ora)}} - {{viaggio.posti_disponibili}} posti</option>
+        <select :disabled="statoViaggi!=''" id="ora_partenza" v-model="viaggio_scelto" class="form-select" aria-label="Ora di partenza">
+            <option :disabled="viaggio.posti_disponibili<=0" v-for="viaggio in viaggi" :value="viaggio._id">{{mostraDurataInModoBello(viaggio.fermate[viaggio.index_partenza].ora)}} - {{viaggio.posti_disponibili}} posti - € {{viaggio.prezzo}}</option>
         </select>
+        
+        <div v-if="statoViaggi"><small>{{statoViaggi}}</small></div>
     </div>
 
     <div class="mb-3">
@@ -77,6 +80,8 @@ data() {
         data_viaggio: '',
         viaggio_scelto: '',
         richiesta_viaggi: 0,
+        statoData: '',
+        statoViaggi: 'Seleziona prima le stazioni e la data del viaggio.',
     }
 },
 methods: {
@@ -87,16 +92,22 @@ methods: {
             });
     },
     aggiornaViaggi(){
+        this.statoViaggi = 'Seleziona prima le stazioni e la data del viaggio.'
         this.viaggi = []
         
         if(!(this.stazione_partenza && this.stazione_arrivo && this.data_viaggio))
-            return;
+            return
         
         let data_viaggio = moment(this.data_viaggio)
 
         if(!data_viaggio.isValid() || data_viaggio.startOf('day').isBefore(moment().startOf('day'))){
-            return;
+            this.statoData = "La data non dev'essere già trascorsa."
+            return
+        }else{
+            this.statoData = ''
         }
+
+        this.statoViaggi = 'Caricamento in corso...'
 
         let richiesta_viaggi_ora = ++this.richiesta_viaggi;    
         axios.get(variables.API_URL + "viaggi-tra-stazioni", {
@@ -110,6 +121,8 @@ methods: {
                 console.log(response)
                 this.viaggi = response.data;
             }
+            
+            this.statoViaggi = ''
         });
     },
     inviaBiglietto(){
