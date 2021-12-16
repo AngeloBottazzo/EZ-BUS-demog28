@@ -451,7 +451,8 @@ app.get('/viaggi-tra-stazioni', (request, response) => {
                 ...viaggio,
                 posti_disponibili: postiDisponibili,
                 index_partenza: indexPartenza,
-                index_arrivo: indexArrivo
+                index_arrivo: indexArrivo,
+                prezzo: (viaggio.fermate[indexArrivo].distanza - viaggio.fermate[indexPartenza].distanza)
             }
         }))
 
