@@ -79,18 +79,18 @@ app.get('/', (request, response)=>{
  *     content:
  *      application/json:
  *       schema:
- *          type: array
- *          items:
- *           type: object
- *           properties:
- *            _id:
- *             type: ObjectId
- *             description: ID della stazione
- *             example: 61ab9a5fe757bd523db4e9ba 
- *            name: 
- *             type: string
- *             description: Nome della stazione
- *             example: Strigno
+ *        type: array
+ *        items:
+ *         type: object
+ *         properties:
+ *          _id:
+ *           type: ObjectId
+ *           description: ID della stazione
+ *           example: 61ab9a5fe757bd523db4e9ba 
+ *          name: 
+ *           type: string
+ *           description: Nome della stazione
+ *           example: Strigno
  */
 app.get('/stazioni', (request, response) => {
     
@@ -110,6 +110,23 @@ app.get('/stazioni', (request, response) => {
  *     required: true
  *    summary: Aggiunta biglietto richiesto
  *    description: viene inserito il nuovo biglietto scelto nella lista di biglietti acquistati
+ *    parameters:
+ *     schema:
+ *     - in: body 
+ *       coso: object
+ *       properties:
+ *        stazione_partenza:
+ *          type: ObjectId
+ *          description: ID della stazione
+ *        stazione_arrivo:
+ *          type: ObjectId
+ *          description: ID della stazione
+ *        _id_viaggio:
+ *         type: ObjectId
+ *        nome:
+ *         type: string
+ *        cognome:
+ *         type: string 
  *    responses:
  *     200:
  *      description: il biglietto scelto in base al form compilato
