@@ -62,17 +62,7 @@ app.listen(8081, () => {
     console.log("server running");
 });
 
-/**
- * @swagger
- * /:
- *  get:
- *   summary: Home page della gestione biglietti
- *   description: home page contenente due pulsanti per scegliere l'azione da svolgere
- *   responses:
- *    200:
- *      description: bottone1 -> Acquista nuovo biglietto, bottone2 -> Acquista nuovo biglietto.
- */
-
+//questa api non è stata commentata poiché non svolge niente
 app.get('/', (request, response)=>{
     response.send('Questo è il server delle api 🐝');
 })
@@ -85,13 +75,13 @@ app.get('/', (request, response)=>{
  *   description: vengono mostrate tutte le stazioni all'interno del database
  *   responses:
  *    200:
- *     description: Una lista di stazione.
+ *     description: Una lista di stazioni.
  *     content:
  *      application/json:
  *       schema:
  *        type: object
  *        properties:
- *         stazione:
+ *         array_stazioni:
  *          type: array
  *          items:
  *           type: object
@@ -342,58 +332,63 @@ app.get('/biglietti', (request, response) => {
  *        schema:
  *         type: object
  *         properties:
- *          _id:
- *           type: ObjectId
- *           description: Id del viaggio
- *           example: 61b3f64ece9723f367f3a845 
- *          nome_linea:
- *           type: string
- *           description: nome della linea
- *           example: Trento – Primolano
- *          giorni:
+ *          viaggi-tra-stazioni:
+ *           type: array
+ *           items:
+ *            type: object
  *            properties:
- *             Monday:
- *              type: boolean
- *              example: true
- *             Tuesday:
- *              type: boolean
- *              example: true
- *             Wednesday:
- *              type: boolean
- *              example: true
- *             Thursday:
- *              type: boolean
- *              example: true
- *             Friday:
- *              type: boolean
- *              example: true
- *             Saturday:
- *              type: boolean
- *              example: false
- *             Sunday:
- *              type: boolean
- *              example: true
- *          posti:
- *           type: Int32
- *           description: numero di posti disponibili per viaggio
- *           example: 5
- *          fermate: 
- *            type: array
- *            items:
- *               type: object
+ *             _id:
+ *              type: ObjectId
+ *              description: Id del viaggio
+ *              example: 61b3f64ece9723f367f3a845 
+ *             nome_linea:
+ *              type: string
+ *              description: nome della linea
+ *              example: Trento – Primolano
+ *             giorni:
  *               properties:
- *                stazione:
- *                 type: ObjectId
- *                 description: Id della stazione passata
- *                 example: 61ab9eb31e607d0f2cce7c58   
- *                ora:
- *                 type: string
- *                 description: orario di partenza
- *                 example: PT5H
- *                distanza:
- *                 type: Int32
- *                 description: distanza tra stazioni
- *                 example: 0
+ *                Monday:
+ *                 type: boolean
+ *                 example: true
+ *                Tuesday:
+ *                 type: boolean
+ *                 example: true
+ *                Wednesday:
+ *                 type: boolean
+ *                 example: true
+ *                Thursday:
+ *                 type: boolean
+ *                 example: true
+ *                Friday:
+ *                 type: boolean
+ *                 example: true
+ *                Saturday:
+ *                 type: boolean
+ *                 example: false
+ *                Sunday:
+ *                 type: boolean
+ *                 example: true
+ *             posti:
+ *              type: Int32
+ *              description: numero di posti disponibili per viaggio
+ *              example: 5
+ *             fermate: 
+ *               type: array
+ *               items:
+ *                  type: object
+ *                  properties:
+ *                   stazione:
+ *                    type: ObjectId
+ *                    description: Id della stazione passata
+ *                    example: 61ab9eb31e607d0f2cce7c58   
+ *                   ora:
+ *                    type: string
+ *                    description: orario di partenza
+ *                    example: PT5H
+ *                   distanza:
+ *                    type: Int32
+ *                    description: distanza tra stazioni
+ *                    example: 0
  *    400:
  *     description: problema generato dalla non presenza dei dati richiesti, oppure data non valida
  *    500:
