@@ -1,0 +1,6 @@
+{
+  "dependencies": {
+    "supertest": "^6.1.6",
+    "tape": "^5.3.2"
+  }
+}

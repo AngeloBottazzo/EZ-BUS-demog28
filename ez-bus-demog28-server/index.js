@@ -124,6 +124,9 @@ app.get('/stazioni', (request, response) => {
  *          viaggio:
  *           type: string
  *           example: 61b3f64ece9723f367f3a842
+ *          data_viaggio:
+ *           type: string
+ *           example: 2021-12-23
  *          nome:
  *           type: string
  *           example: Gino
