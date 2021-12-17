@@ -17,6 +17,9 @@ const biglietti_acquistati = {
             </div>
         </div>
     </div>
+    <div id="overlay">
+    
+    </div>
 </div>
 `,
     data() {
