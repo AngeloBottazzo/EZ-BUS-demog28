@@ -147,6 +147,13 @@ app.post('/biglietti', (request, response) => {
         response.send("Dati non completi")
         return;
     }
+
+    
+    if(!request.body.data_viaggio){
+        response.status(400)
+        response.send("Data non presente")
+        return;
+    }
     
     let data_viaggio = moment(request.body.data_viaggio);
     if(!data_viaggio.isValid() || data_viaggio.startOf('day').isBefore(moment().startOf('day'))){
