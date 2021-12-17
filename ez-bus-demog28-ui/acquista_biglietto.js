@@ -148,7 +148,7 @@ methods: {
         return moment.utc(moment.duration(durata).asMilliseconds()).format("HH:mm")
     },
     nameKeydown(e) {
-        if (!(/[0-9+ ]/.test(e.key) && e.key === "Backspace" && e.key === "Delete")) {
+        if (!(/[0-9+ ]/.test(e.key) || e.key === "Backspace" || e.key === "Delete" || e.key === "ArrowLeft" || e.key === "ArrowRight")) {
           e.preventDefault();
         }
       },
