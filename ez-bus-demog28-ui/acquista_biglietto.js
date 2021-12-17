@@ -51,7 +51,7 @@ const acquista_biglietto={template:`
     <div class="mb-3">
         <label for="telefono" class="form-label">Telefono</label>
         
-        <input type="tel" id="telefono" v-model="telefono" class="form-control" aria-label="Telefono"/>
+        <input type="tel" id="telefono" v-model="telefono" @keydown="nameKeydown($event)" class="form-control" aria-label="Telefono"/>
     </div>
 
     <div class="mb-3">
@@ -146,7 +146,12 @@ methods: {
     },
     mostraDurataInModoBello(durata){
         return moment.utc(moment.duration(durata).asMilliseconds()).format("HH:mm")
-    }
+    },
+    nameKeydown(e) {
+        if (!(/[0-9+ ]/.test(e.key) || e.key === "Backspace" || e.key === "Delete" || e.key === "ArrowLeft" || e.key === "ArrowRight")) {
+          e.preventDefault();
+        }
+      },
 },
 mounted: function () {
     this.refreshData();

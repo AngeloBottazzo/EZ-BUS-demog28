@@ -48,6 +48,7 @@ const dbcredentials = JSON.parse(fs.readFileSync('db-credentials.json'));
 var MongoClient = require("mongodb").MongoClient;
 var string = require("mongodb").string;
 const { urlencoded } = require('express');
+const { ObjectId } = require('mongodb');
 var CONNECTION_STRING = "mongodb+srv://" + dbcredentials.username + ":" + dbcredentials.password + "@cluster0.rrla8.mongodb.net/ezbusdev?retryWrites=true&w=majority"
 
 var DATABASE = "ezbusdev";
@@ -166,9 +167,9 @@ app.post('/biglietti', (request, response) => {
     }
 
     if(!database.collection("viaggi").findOne({
-        _id : String(request.body.viaggio),
-        fermate : { $elemMatch: {stazione : String(request.query.stazione_partenza)}},
-        fermate : { $elemMatch: {stazione : String(request.query.stazione_arrivo)}}
+        _id : ObjectId(request.body.viaggio),
+        fermate : { $elemMatch: {stazione : ObjectId(request.query.stazione_partenza)}},
+        fermate : { $elemMatch: {stazione : ObjectId(request.query.stazione_arrivo)}}
     })){
         response.status(400)
         response.send("Viaggio non valido")
@@ -176,10 +177,10 @@ app.post('/biglietti', (request, response) => {
     }
 
     database.collection("biglietti_acquistati").insertOne({
-        viaggio: String(request.body.viaggio),
+        viaggio: ObjectId(request.body.viaggio),
         data_viaggio: data_viaggio.format("YYYY-MM-DD"),
-        stazione_partenza: String(request.body.stazione_partenza),
-        stazione_arrivo: String(request.body.stazione_arrivo),
+        stazione_partenza: ObjectId(request.body.stazione_partenza),
+        stazione_arrivo: ObjectId(request.body.stazione_arrivo),
         intestatario : {
             nome: request.body.nome,
             cognome: request.body.cognome,
@@ -417,7 +418,7 @@ app.get('/viaggi-tra-stazioni', (request, response) => {
     
     potenzialiViaggi = database.collection("viaggi").find({
         ["giorni." + data_viaggio.format("dddd")] : true,
-        fermate : { $elemMatch: {stazione : String(request.query.stazione_partenza)}}
+        fermate : { $elemMatch: {stazione : ObjectId(request.query.stazione_partenza)}}
     }).toArray(async (error, tuttiViaggi) => {
         if (error) {
             console.log(error);
