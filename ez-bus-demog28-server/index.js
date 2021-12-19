@@ -3,7 +3,7 @@ var Express = require("express");
 const moment = require('moment');
 
 var app = Express();
-
+module.exports = app
 // modules to generate APIs documentation
 const swaggerJsDoc = require('swagger-jsdoc');
 const swaggerUi = require('swagger-ui-express');

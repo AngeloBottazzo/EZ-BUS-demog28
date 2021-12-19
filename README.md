@@ -19,13 +19,9 @@ L'idea della repository creata è quella di mostrare l'utilizzo della applicazio
 
 ### Home
 Nella home abbiamo inserito solo 2 bottoni che servono per navigare tra le due azioni possibili: acquistare un biglietto e visionare i biglietti acquistati.
-<em align = "center"> da inserire immagine </em>
 ### Acquista biglietto
 Nella schermata di acquisto biglietto l'utente deve compilare un form inserendo la tratta da selezionare e qualche dato personale per identificare chi utilizza il biglietto. 
-<em align = "center"> da inserire immagine </em>
 ### Pagina di acquisto
 Nella pagina di acquisto l'utente ha la possibilità di visualizzare il prezzo del biglietto, selezionare, e successivamente inserire i dati, il metodo di pagamento preferito.
-<em align = "center"> da inserire immagine </em>
 ### Biglietti acquistati
 Nella schermata è possibile vedere i biglietti acquistati dall'utente
-<em align = "center"> da inserire immagine </em>
