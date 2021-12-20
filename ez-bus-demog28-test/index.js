@@ -1,8 +1,8 @@
 var test = require('tape');
 var request = require('supertest');
-var expressServer = require('../ez-bus-demog28-server/index')
+var connettiDatabaseEPrendiApp = require('../ez-bus-demog28-server/index')
 
-expressServer().then((app)=>{
+connettiDatabaseEPrendiApp().then((app)=>{
     test('TEST1: inserimento corretto di un biglietto dentro la collezione di biglietti',function (assert) {
         request(app)
             .post('/biglietti')
