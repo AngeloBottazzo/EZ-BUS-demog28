@@ -1,9 +1,10 @@
+'use strict';
 const fs = require('fs');
 var Express = require("express");
 const moment = require('moment');
 
 var app = Express();
-module.exports = app
+
 // modules to generate APIs documentation
 const swaggerJsDoc = require('swagger-jsdoc');
 const swaggerUi = require('swagger-ui-express');
@@ -54,13 +55,16 @@ var CONNECTION_STRING = "mongodb+srv://" + dbcredentials.username + ":" + dbcred
 var DATABASE = "ezbusdev";
 var database;
 
+//per il testing
+var port = process.env.PORT || 8081;
+
 app.listen(8081, () => {
     MongoClient.connect(CONNECTION_STRING, { useNewUrlParser: true }, (error, client) => {
         database = client.db(DATABASE);
         console.log("Mongo DB Connection Successfull");
     })
 
-    console.log("server running");
+    console.log('server running on port %d', port);
 });
 
 //questa api non è stata commentata poiché non svolge niente
@@ -466,3 +470,5 @@ app.get('/viaggi-tra-stazioni', (request, response) => {
         response.send(viaggiConPosti)
     })
 })
+
+module.exports = app
