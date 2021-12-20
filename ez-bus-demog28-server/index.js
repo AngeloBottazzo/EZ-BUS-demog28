@@ -424,7 +424,7 @@ app.get('/viaggi-tra-stazioni', (request, response) => {
         return;
     }
     
-    potenzialiViaggi = database.collection("viaggi").find({
+    database.collection("viaggi").find({
         ["giorni." + data_viaggio.format("dddd")] : true,
         fermate : { $elemMatch: {stazione : ObjectId(request.query.stazione_partenza)}}
     }).toArray(async (error, tuttiViaggi) => {
