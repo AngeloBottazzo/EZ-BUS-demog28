@@ -1,4 +1,3 @@
-'use strict';
 const fs = require('fs');
 var Express = require("express");
 const moment = require('moment');
@@ -52,18 +51,23 @@ const { urlencoded } = require('express');
 const { ObjectId } = require('mongodb');
 var CONNECTION_STRING = "mongodb+srv://" + dbcredentials.username + ":" + dbcredentials.password + "@cluster0.rrla8.mongodb.net/ezbusdev?retryWrites=true&w=majority"
 
+
 var DATABASE = "ezbusdev";
 var database;
+
+async function connettiDatabaseEPrendiApp(){
+    console.log("Connessione al database in corso...");
+    let client = await MongoClient.connect(CONNECTION_STRING)
+    database = client.db(DATABASE)
+    console.log("Connesso al database")
+    return app;
+}
 
 //per il testing
 var port = process.env.PORT || 8081;
 
-app.listen(8081, () => {
-    MongoClient.connect(CONNECTION_STRING, { useNewUrlParser: true }, (error, client) => {
-        database = client.db(DATABASE);
-        console.log("Mongo DB Connection Successfull");
-    })
-
+app.listen(8081, async () => {
+    await connettiDatabaseEPrendiApp()
     console.log('server running on port %d', port);
 });
 
@@ -471,4 +475,4 @@ app.get('/viaggi-tra-stazioni', (request, response) => {
     })
 })
 
-module.exports = app
+module.exports = connettiDatabaseEPrendiApp
