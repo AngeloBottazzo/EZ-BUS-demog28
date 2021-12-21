@@ -1,0 +1,31 @@
+{
+  "name": "ez-bus-demog28",
+  "version": "1.0.0",
+  "description": "Demo del progetto EZ-BUS",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js",
+    "test": "node ./ez-bus-demog28-test/index.js",
+    "popoladb": "node ./ez-bus-demog28-test/genera_orari.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/AngeloBottazzo/EZ-BUS-demog28.git"
+  },
+  "author": "G28 2021",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/AngeloBottazzo/EZ-BUS-demog28/issues"
+  },
+  "homepage": "https://github.com/AngeloBottazzo/EZ-BUS-demog28#readme",
+  "dependencies": {
+    "cors": "^2.8.5",
+    "express": "^4.17.2",
+    "moment": "^2.29.1",
+    "mongodb": "^4.2.2",
+    "supertest": "^6.1.6",
+    "swagger-jsdoc": "^6.1.0",
+    "swagger-ui-express": "^4.3.0",
+    "tape": "^5.3.2"
+  }
+}

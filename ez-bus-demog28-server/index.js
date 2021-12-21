@@ -1,6 +1,6 @@
-const fs = require('fs');
 var Express = require("express");
 const moment = require('moment');
+const credentials = require('../credentials');
 
 var app = Express();
 
@@ -31,7 +31,7 @@ const swaggerOptions = {
             },
         ],
     },
-    apis: ["index.js"]
+    apis: ["ez-bus-demog28-server/index.js"]
 };
 
 const swaggerDocs = swaggerJsDoc(swaggerOptions);
@@ -43,29 +43,35 @@ app.use(Express.urlencoded({ extended: true }));
 var cors = require('cors')
 app.use(cors())
 
-const dbcredentials = JSON.parse(fs.readFileSync('db-credentials.json'));
-
 var MongoClient = require("mongodb").MongoClient;
-var string = require("mongodb").string;
 const { urlencoded } = require('express');
 const { ObjectId } = require('mongodb');
-var CONNECTION_STRING = "mongodb+srv://" + dbcredentials.username + ":" + dbcredentials.password + "@cluster0.rrla8.mongodb.net/ezbusdev?retryWrites=true&w=majority"
+var CONNECTION_STRING = "mongodb+srv://" + credentials.username + ":" + credentials.password + "@cluster0.rrla8.mongodb.net/ezbusdev?retryWrites=true&w=majority"
+
 
 var DATABASE = "ezbusdev";
 var database;
 
-app.listen(8081, () => {
-    MongoClient.connect(CONNECTION_STRING, { useNewUrlParser: true }, (error, client) => {
-        database = client.db(DATABASE);
-        console.log("Mongo DB Connection Successfull");
-    })
+async function connettiDatabaseEPrendiApp(){
+    console.log("Connessione al database in corso...");
+    let client = await MongoClient.connect(CONNECTION_STRING)
+    database = client.db(DATABASE)
+    console.log("Connesso al database")
+    return app;
+}
 
-    console.log("server running");
-});
+//per il testing
+var port = process.env.PORT || 8081;
 
 //questa api non è stata commentata poiché non svolge niente
 app.get('/', (request, response)=>{
-    response.send('Questo è il server delle api 🐝');
+    response.send(`
+    <div style="display: flex;position: absolute;top: 0;bottom: 0;left: 0;right: 0;justify-content: center;align-items: center;padding:6pt">
+        <div style="text-align:center;font-family: monospace;font-size: x-large;">
+            Questo è il server delle api 🐝. <br>
+            Puoi vedere le api <a href="./api-docs/">qui</a>.
+        <div>
+    </div>`);
 })
 
 /**
@@ -416,7 +422,7 @@ app.get('/viaggi-tra-stazioni', (request, response) => {
         return;
     }
     
-    potenzialiViaggi = database.collection("viaggi").find({
+    database.collection("viaggi").find({
         ["giorni." + data_viaggio.format("dddd")] : true,
         fermate : { $elemMatch: {stazione : ObjectId(request.query.stazione_partenza)}}
     }).toArray(async (error, tuttiViaggi) => {
@@ -466,3 +472,5 @@ app.get('/viaggi-tra-stazioni', (request, response) => {
         response.send(viaggiConPosti)
     })
 })
+
+module.exports = {app: app, connettiDatabaseEPrendiApp: connettiDatabaseEPrendiApp }
