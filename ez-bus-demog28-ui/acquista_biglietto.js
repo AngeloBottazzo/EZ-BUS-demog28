@@ -161,11 +161,13 @@ mounted: async function () {
         let biglietto = this.$route.params.biglietto;
         this.stazione_partenza = biglietto.stazione_partenza;
         this.stazione_arrivo = biglietto.stazione_arrivo;
-        this.data_viaggio = biglietto.data_viaggio;
-        await this.aggiornaViaggi();
-        this.viaggio_scelto = this.viaggi.find((viaggio)=> viaggio._id==biglietto.viaggio);
-        if (this.viaggio_scelto.posti_disponibili < 1) {
-            this.viaggio_scelto = null;
+        this.data_viaggio = null;
+        if (moment(biglietto.data_viaggio).isAfter(moment())) {
+            this.data_viaggio = biglietto.data_viaggio;
+            await this.aggiornaViaggi();
+            this.viaggio_scelto = this.viaggi.find((viaggio)=> viaggio._id==biglietto.viaggio);
+            if (this.viaggio_scelto.posti_disponibili < 1)
+                this.viaggio_scelto = null;
         }
         this.nome = biglietto.intestatario.nome;
         this.cognome = biglietto.intestatario.cognome;

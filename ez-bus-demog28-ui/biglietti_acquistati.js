@@ -7,7 +7,7 @@ const biglietti_acquistati = {
     <div class="container">
         <div class="row">
             <div v-for="biglietto in biglietti" class="col col-12 col-lg-6 px-2 p-2">
-                <button type="button" class="btn btn-success container" v-on:click="apriPopup(biglietto)">
+                <button type="button" :class="[passato(biglietto)? 'btn-success': 'btn-secondary', 'btn', 'container']" v-on:click="apriPopup(biglietto)">
                     {{biglietto.info_stazione_partenza.nome}}: {{ $root.dataOraBreve(biglietto.data_partenza) }} <br>
                     {{biglietto.info_stazione_arrivo.nome}}: {{ $root.dataOraBreve(biglietto.data_arrivo) }} <br>
                     € {{biglietto.prezzo??0}}
@@ -39,7 +39,7 @@ const biglietti_acquistati = {
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" v-on:click="chiudiPopup">Chiudi</button>
                         <button type="button" class="btn btn-info" v-on:click="autoFill">Acquista di nuovo</button>
-                        <button type="button" class="btn btn-danger" v-on:click="rimborso">Annulla e rimborsa biglietto</button>
+                        <button type="button" :disabled="!passato(biglietto)" class="btn btn-danger" v-on:click="rimborso">Annulla e rimborsa biglietto</button>
                     </div>
                 </div>
             </div>
@@ -78,6 +78,9 @@ const biglietti_acquistati = {
         },
         autoFill() {
             router.push({name:"acquista-biglietto", params:{biglietto:this.biglietto}})
+        },
+        passato(biglietto) {
+            return moment(biglietto.data_viaggio).isAfter(moment()); 
         }
     },
     mounted: function () {
