@@ -196,7 +196,31 @@ app.post('/biglietti', (request, response) => {
     });
     response.sendStatus(200);
 })
-
+/**
+ * @swagger
+ *  /biglietti/{id}:
+ *   delete:
+ *    parameters:
+ *     - in: path
+ *       name: id
+ *       schema:
+ *        type: string
+ *       example: 61b3f74b98111ddceb4b78a0
+ *       required: true
+ *    summary: Cancellazione di un biglietto selezionato
+ *    description: la cancellazione del biglietto avviene tramite selezione dell'ID del biglietto
+ *    responses:
+ *     200:
+ *      description: cancellazione avvenuta correttamente
+ *      content:
+ *       text/plain:
+ *        example: OK
+ *     400:
+ *      description: biglietto non trovato
+ *      content:
+ *       text/plain:
+ *        example: Bad Request
+ */
 app.delete('/biglietti/:id', (request, response) => {
 
     database.collection("biglietti_acquistati").deleteOne({
