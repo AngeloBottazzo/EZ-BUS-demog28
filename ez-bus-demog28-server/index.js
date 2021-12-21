@@ -31,7 +31,7 @@ const swaggerOptions = {
             },
         ],
     },
-    apis: ["index.js"]
+    apis: ["ez-bus-demog28-server/index.js"]
 };
 
 const swaggerDocs = swaggerJsDoc(swaggerOptions);
@@ -44,7 +44,6 @@ var cors = require('cors')
 app.use(cors())
 
 var MongoClient = require("mongodb").MongoClient;
-var string = require("mongodb").string;
 const { urlencoded } = require('express');
 const { ObjectId } = require('mongodb');
 var CONNECTION_STRING = "mongodb+srv://" + credentials.username + ":" + credentials.password + "@cluster0.rrla8.mongodb.net/ezbusdev?retryWrites=true&w=majority"
