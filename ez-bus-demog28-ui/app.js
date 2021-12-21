@@ -14,6 +14,9 @@ const app = new Vue({
     methods: {
         dataOraBreve(stringaISO){
             return moment(stringaISO).format("DD/MM/YYYY HH:mm");
+        },
+        formattaPrezzo(prezzo){
+            return prezzo ? "€ " + parseFloat(prezzo).toFixed(2) : 'prezzo non valido'
         }
     }
 }).$mount('#app')

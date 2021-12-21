@@ -11,7 +11,7 @@ const biglietti_acquistati = {
                     <div class="card-body">
                         {{biglietto.info_stazione_partenza.nome}}: {{ $root.dataOraBreve(biglietto.data_partenza) }} <br>
                         {{biglietto.info_stazione_arrivo.nome}}: {{ $root.dataOraBreve(biglietto.data_arrivo) }} <br>
-                        svariati euro
+                        {{$root.formattaPrezzo(biglietto.prezzo)}}
                     </div>
                 </div>
             </div>

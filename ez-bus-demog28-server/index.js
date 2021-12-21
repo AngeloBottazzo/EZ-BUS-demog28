@@ -152,7 +152,7 @@ app.get('/stazioni', (request, response) => {
  *      description: errore per dati non completi, dati non validi, viaggio non valido
  */
 app.post('/biglietti', (request, response) => {
-    if(!request.body.stazione_partenza || !request.body.stazione_arrivo || !request.body.viaggio || !request.body.nome || !request.body.cognome){
+    if(!request.body.stazione_partenza || !request.body.stazione_arrivo || !request.body.viaggio || !request.body.nome || !request.body.cognome || !request.body.prezzo || !request.body.pagamento){
         response.status(400)
         response.send("Dati non completi")
         return;
@@ -187,6 +187,8 @@ app.post('/biglietti', (request, response) => {
         data_viaggio: data_viaggio.format("YYYY-MM-DD"),
         stazione_partenza: ObjectId(request.body.stazione_partenza),
         stazione_arrivo: ObjectId(request.body.stazione_arrivo),
+        pagamento: request.body.pagamento,
+        prezzo: request.body.prezzo,
         intestatario : {
             nome: request.body.nome,
             cognome: request.body.cognome,
@@ -461,7 +463,7 @@ app.get('/viaggi-tra-stazioni', (request, response) => {
                 posti_disponibili: postiDisponibili,
                 index_partenza: indexPartenza,
                 index_arrivo: indexArrivo,
-                prezzo: (viaggio.fermate[indexArrivo].distanza - viaggio.fermate[indexPartenza].distanza)/50.0 + 1
+                prezzo: Math.round(((viaggio.fermate[indexArrivo].distanza - viaggio.fermate[indexPartenza].distanza)/50.0 + 1)*100)/100
             }
         }))
 
