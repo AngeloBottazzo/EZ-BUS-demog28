@@ -1,9 +1,21 @@
 var test = require('tape');
 var request = require('supertest');
-var connettiDatabaseEPrendiApp = require('../ez-bus-demog28-server/index')
+var server = require('../ez-bus-demog28-server/index')
 
-connettiDatabaseEPrendiApp().then((app)=>{
-    test('TEST1: inserimento corretto di un biglietto dentro la collezione di biglietti',function (assert) {
+server.connettiDatabaseEPrendiApp().then((app)=>{
+    
+    test('TEST 1: reperimento delle stazioni',function (assert) {
+        request(app)
+            .get('/stazioni')
+            .expect(200)
+            .end((err,res) => {
+                assert.true(res.body.length > 0, 'Nessuna stazione ricevuta')
+                assert.error(err,'No error');
+                assert.end();
+            })
+    });
+
+    test('TEST 2: inserimento corretto di un biglietto dentro la collezione di biglietti',function (assert) {
         request(app)
             .post('/biglietti')
             .send({
@@ -23,4 +35,5 @@ connettiDatabaseEPrendiApp().then((app)=>{
                 assert.end();
             })
     });
+
 })

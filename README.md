@@ -3,7 +3,7 @@
 ## Partecipanti
 Questo progetto è stato svolto dal gruppo G28, composto da:
 <ul>
-<li> <b> Angelo Bottazzo </b> <em>PM</em> </li>
+<li> <b> Angelo Bottazzo </b> </li>
 <li> <b> Elia Gatti </b> </li>
 <li> <b> Leonardo Lucini </b> </li>
 </ul>

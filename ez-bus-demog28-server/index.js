@@ -1,6 +1,6 @@
-const fs = require('fs');
 var Express = require("express");
 const moment = require('moment');
+const credentials = require('../credentials');
 
 var app = Express();
 
@@ -43,13 +43,11 @@ app.use(Express.urlencoded({ extended: true }));
 var cors = require('cors')
 app.use(cors())
 
-const dbcredentials = JSON.parse(fs.readFileSync('db-credentials.json'));
-
 var MongoClient = require("mongodb").MongoClient;
 var string = require("mongodb").string;
 const { urlencoded } = require('express');
 const { ObjectId } = require('mongodb');
-var CONNECTION_STRING = "mongodb+srv://" + dbcredentials.username + ":" + dbcredentials.password + "@cluster0.rrla8.mongodb.net/ezbusdev?retryWrites=true&w=majority"
+var CONNECTION_STRING = "mongodb+srv://" + credentials.username + ":" + credentials.password + "@cluster0.rrla8.mongodb.net/ezbusdev?retryWrites=true&w=majority"
 
 
 var DATABASE = "ezbusdev";
@@ -66,14 +64,15 @@ async function connettiDatabaseEPrendiApp(){
 //per il testing
 var port = process.env.PORT || 8081;
 
-app.listen(8081, async () => {
-    await connettiDatabaseEPrendiApp()
-    console.log('server running on port %d', port);
-});
-
 //questa api non è stata commentata poiché non svolge niente
 app.get('/', (request, response)=>{
-    response.send('Questo è il server delle api 🐝');
+    response.send(`
+    <div style="display: flex;position: absolute;top: 0;bottom: 0;left: 0;right: 0;justify-content: center;align-items: center;padding:6pt">
+        <div style="text-align:center;font-family: monospace;font-size: x-large;">
+            Questo è il server delle api 🐝. <br>
+            Puoi vedere le api <a href="./api-docs/">qui</a>.
+        <div>
+    </div>`);
 })
 
 /**
@@ -475,4 +474,4 @@ app.get('/viaggi-tra-stazioni', (request, response) => {
     })
 })
 
-module.exports = connettiDatabaseEPrendiApp
+module.exports = {app: app, connettiDatabaseEPrendiApp: connettiDatabaseEPrendiApp }
