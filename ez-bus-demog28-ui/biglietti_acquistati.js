@@ -10,7 +10,7 @@ const biglietti_acquistati = {
                 <button type="button" class="btn btn-success container" v-on:click="apriPopup(biglietto)">
                     {{biglietto.info_stazione_partenza.nome}}: {{ $root.dataOraBreve(biglietto.data_partenza) }} <br>
                     {{biglietto.info_stazione_arrivo.nome}}: {{ $root.dataOraBreve(biglietto.data_arrivo) }} <br>
-                    svariati euro
+                    € {{biglietto.prezzo??0}}
                 </button>
             </div>
         </div>
@@ -23,12 +23,23 @@ const biglietti_acquistati = {
                         <h5 class="modal-title">Impostazioni biglietto</h5>
                     </div>
                     <div class="modal-body">
-                        <p>Modal body text goes here.</p>
+                        <div style="display:flex;justify-content: space-between;">
+                            <div >
+                                {{biglietto.info_stazione_partenza.nome}}: {{ $root.dataOraBreve(biglietto.data_partenza) }} <br>
+                                {{biglietto.info_stazione_arrivo.nome}}: {{ $root.dataOraBreve(biglietto.data_arrivo) }} <br>
+                                € {{biglietto.prezzo??0}}
+                            </div>
+                            <div>
+                                {{biglietto.intestatario.nome}} <br>
+                                {{biglietto.intestatario.cognome}} <br>
+                                {{biglietto.intestatario.telefono}}
+                            </div>
+                        </div> 
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" v-on:click="chiudiPopup">Chiudi</button>
                         <button type="button" class="btn btn-info">Acquista di nuovo</button>
-                        <button type="button" class="btn btn-danger">Annulla e rimborsa biglietto</button>
+                        <button type="button" class="btn btn-danger" v-on:click="rimborso">Annulla e rimborsa biglietto</button>
                     </div>
                 </div>
             </div>
@@ -39,7 +50,7 @@ const biglietti_acquistati = {
     data() {
         return{
             biglietti: [],
-            mostraOverlay: true,
+            mostraOverlay: false,
             biglietto:null
         }
     },
@@ -56,6 +67,14 @@ const biglietti_acquistati = {
         apriPopup(biglietto) {
             this.biglietto = biglietto;
             this.mostraOverlay = true;
+        },
+        rimborso() {
+            axios.delete(variables.API_URL + "biglietti/" + this.biglietto._id)
+                .then((response) => {
+                    this.refreshData();
+                }) .catch(function (error) {
+                    console.log(error);
+                });
         }
     },
     mounted: function () {

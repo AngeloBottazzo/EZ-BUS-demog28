@@ -197,6 +197,15 @@ app.post('/biglietti', (request, response) => {
     response.sendStatus(200);
 })
 
+app.delete('/biglietti/:id', (request, response) => {
+
+    database.collection("biglietti_acquistati").deleteOne({
+        _id: ObjectId(request.params.id)
+    });
+
+    response.sendStatus(200);
+})
+
 function trovaFermataInViaggio(viaggio, stazione) {
     return viaggio.fermate.find(fermata => {
         return fermata.stazione.toString() == stazione.toString()
