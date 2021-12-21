@@ -109,7 +109,8 @@ methods: {
 
         this.statoViaggi = 'Caricamento in corso...'
 
-        let richiesta_viaggi_ora = ++this.richiesta_viaggi;    
+        let richiesta_viaggi_ora = ++this.richiesta_viaggi;
+
         axios.get(variables.API_URL + "viaggi-tra-stazioni", {
             params:{
                 data_viaggio: this.data_viaggio,
