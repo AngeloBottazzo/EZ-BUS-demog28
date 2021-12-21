@@ -30,7 +30,7 @@ const acquista_biglietto={template:`
         <label for="ora_partenza" class="form-label">Ora di partenza</label>
         
         <select :disabled="statoViaggi!=''" id="ora_partenza" v-model="viaggio_scelto" class="form-select" aria-label="Ora di partenza">
-            <option :disabled="viaggio.posti_disponibili<=0" v-for="viaggio in viaggi" :value="viaggio._id">{{mostraDurataInModoBello(viaggio.fermate[viaggio.index_partenza].ora)}} - {{viaggio.posti_disponibili}} posti - € {{viaggio.prezzo}}</option>
+            <option :disabled="viaggio.posti_disponibili<=0" v-for="viaggio in viaggi" :value="viaggio">{{mostraDurataInModoBello(viaggio.fermate[viaggio.index_partenza].ora)}} - {{viaggio.posti_disponibili}} posti - € {{viaggio.prezzo}}</option>
         </select>
         
         <div v-if="statoViaggi"><small>{{statoViaggi}}</small></div>
@@ -85,13 +85,13 @@ data() {
     }
 },
 methods: {
-    refreshData() {
-        axios.get(variables.API_URL + "stazioni")
+    async refreshData() {
+        await axios.get(variables.API_URL + "stazioni")
             .then((response) => {
                 this.stazioni = response.data
             });
     },
-    aggiornaViaggi(){
+    async aggiornaViaggi(){
         this.statoViaggi = 'Seleziona prima le stazioni e la data del viaggio.'
         this.viaggi = []
         
@@ -111,7 +111,7 @@ methods: {
 
         let richiesta_viaggi_ora = ++this.richiesta_viaggi;
 
-        axios.get(variables.API_URL + "viaggi-tra-stazioni", {
+        await axios.get(variables.API_URL + "viaggi-tra-stazioni", {
             params:{
                 data_viaggio: this.data_viaggio,
                 stazione_partenza: this.stazione_partenza,
@@ -133,7 +133,7 @@ methods: {
             telefono: this.telefono,
             data_nascita: this.data_nascita,
             data_viaggio: Date.parse(this.data_viaggio),
-            viaggio: this.viaggio_scelto,
+            viaggio: this.viaggio_scelto._id,
             stazione_partenza: this.stazione_partenza,
             stazione_arrivo: this.stazione_arrivo,
         })
@@ -154,8 +154,24 @@ methods: {
         }
       },
 },
-mounted: function () {
-    this.refreshData();
+mounted: async function () {
+    await this.refreshData();
+    console.log(this.$route.params.biglietto);
+    if("biglietto" in this.$route.params) {
+        let biglietto = this.$route.params.biglietto;
+        this.stazione_partenza = biglietto.stazione_partenza;
+        this.stazione_arrivo = biglietto.stazione_arrivo;
+        this.data_viaggio = biglietto.data_viaggio;
+        await this.aggiornaViaggi();
+        this.viaggio_scelto = this.viaggi.find((viaggio)=> viaggio._id==biglietto.viaggio);
+        if (this.viaggio_scelto.posti_disponibili < 1) {
+            this.viaggio_scelto = null;
+        }
+        this.nome = biglietto.intestatario.nome;
+        this.cognome = biglietto.intestatario.cognome;
+        this.telefono = biglietto.intestatario.telefono;
+        this.data_nascita = biglietto.intestatario.data_nascita;
+    }
 }
 
 }

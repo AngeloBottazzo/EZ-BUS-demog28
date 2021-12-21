@@ -1,7 +1,7 @@
 const routes=[
     {path:'/home',component:home},
     {path:'/',component:home},
-    {path:'/acquista-biglietto',component:acquista_biglietto},
+    {path:'/acquista-biglietto',component:acquista_biglietto, name:"acquista-biglietto"},
     {path:'/biglietti-acquistati',component:biglietti_acquistati}
 ]
 

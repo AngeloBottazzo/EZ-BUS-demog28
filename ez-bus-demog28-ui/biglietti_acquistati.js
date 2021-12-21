@@ -38,7 +38,7 @@ const biglietti_acquistati = {
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" v-on:click="chiudiPopup">Chiudi</button>
-                        <button type="button" class="btn btn-info">Acquista di nuovo</button>
+                        <button type="button" class="btn btn-info" v-on:click="autoFill">Acquista di nuovo</button>
                         <button type="button" class="btn btn-danger" v-on:click="rimborso">Annulla e rimborsa biglietto</button>
                     </div>
                 </div>
@@ -75,6 +75,9 @@ const biglietti_acquistati = {
                 }) .catch(function (error) {
                     console.log(error);
                 });
+        },
+        autoFill() {
+            router.push({name:"acquista-biglietto", params:{biglietto:this.biglietto}})
         }
     },
     mounted: function () {
