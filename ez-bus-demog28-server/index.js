@@ -180,7 +180,7 @@ app.post('/biglietti', async (request, response) => {
         response.send("Data non presente")
         return;
     }
-    
+
     let data_viaggio = moment(request.body.data_viaggio, moment.ISO_8601)
     if (!data_viaggio.isValid()) {
         response.status(400);

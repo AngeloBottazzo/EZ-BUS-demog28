@@ -167,7 +167,7 @@ methods: {
                         cognome: vueComponent.cognome,
                         telefono: vueComponent.telefono,
                         data_nascita: vueComponent.data_nascita,
-                        data_viaggio: Date.parse(vueComponent.data_viaggio),
+                        data_viaggio: moment(vueComponent.data_viaggio).format("YYYY-MM-DD"),
                         viaggio: vueComponent.viaggio_scelto._id,
                         stazione_partenza: vueComponent.stazione_partenza,
                         stazione_arrivo: vueComponent.stazione_arrivo,
