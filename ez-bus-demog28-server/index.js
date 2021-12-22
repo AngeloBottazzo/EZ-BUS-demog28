@@ -188,8 +188,6 @@ app.post('/biglietti', async (request, response) => {
         return;
     }
 
-    if(data_viaggio.clone().add(moment.duration()))
-
     var viaggio = await database.collection("viaggi").findOne({
         _id : ObjectId(request.body.viaggio),
         fermate : { $elemMatch: {stazione : ObjectId(request.query.stazione_partenza)}},
