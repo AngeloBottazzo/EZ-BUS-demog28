@@ -195,7 +195,6 @@ methods: {
 },
 mounted: async function () {
     await this.refreshData();
-    console.log(this.$route.params.biglietto);
     if("biglietto" in this.$route.params) {
         let biglietto = this.$route.params.biglietto;
         this.stazione_partenza = biglietto.stazione_partenza;
