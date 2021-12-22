@@ -181,13 +181,13 @@ app.post('/biglietti', async (request, response) => {
         return;
     }
     
-    let data_viaggio = moment(request.body.data_viaggio).startOf('day')
-    if(!data_viaggio.isValid() || data_viaggio.isBefore(moment().startOf('day'))){
-        response.status(400)
-        response.send("Data non valida")
+    let data_viaggio = moment(request.query.data_viaggio, moment.ISO_8601)
+    if (!data_viaggio.isValid()) {
+        response.status(400);
+        response.send("Data mal formata")
         return;
     }
-    console.log(request.body.viaggio)
+    data_viaggio = data_viaggio.startOf('day')
 
     var viaggio = await database.collection("viaggi").findOne({
         _id : ObjectId(request.body.viaggio)
