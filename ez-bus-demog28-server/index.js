@@ -496,16 +496,24 @@ app.get('/biglietti', (request, response) => {
  *     description: problema generato dall'errore nel reperire i viaggi possibili dalla stazione di partenza
  */
 app.get('/viaggi-tra-stazioni', (request, response) => {
-    let data_viaggio = moment(request.query.data_viaggio).startOf('day')
-    if (!('stazione_partenza' in request.query) || !('stazione_arrivo' in request.query) || !data_viaggio.isValid()) {
+    if (!('stazione_partenza' in request.query) || !('stazione_arrivo' in request.query) ||  !('data_viaggio' in request.query)) {
         response.status(400);
         response.send("Dati non completi")
         return;
     }
+    
+    let data_viaggio = moment(request.query.data_viaggio, moment.ISO_8601)
+    if (!data_viaggio.isValid()) {
+        response.status(400);
+        response.send("Data mal formata")
+        return;
+    }
+
+    data_viaggio = data_viaggio.startOf('day');
 
     if(data_viaggio.isBefore(moment().startOf('day'))){
         response.status(400)
-        response.send("Data non valida")
+        response.send("La data è già passata")
         return;
     }
     
