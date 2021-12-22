@@ -126,14 +126,14 @@ app.get('/stazioni', (request, response) => {
  *          stazione_partenza:
  *           type: string
  *           description: ID della stazione
- *           example: 61ab9eb31e607d0f2cce7c58
+ *           example: 61ab9eb31e607d0f2cce7c59
  *          stazione_arrivo:
  *           type: string
  *           description: ID della stazione
- *           example: 61aba0b31e607d0f2cce7c68
+ *           example: 61ab9fda1e607d0f2cce7c60
  *          viaggio:
  *           type: string
- *           example: 61b3f64ece9723f367f3a842
+ *           example: 61b3f64ece9723f367f3a840
  *          data_viaggio:
  *           type: string
  *           example: 2021-12-23
@@ -143,6 +143,19 @@ app.get('/stazioni', (request, response) => {
  *          cognome:
  *           type: string
  *           example: Pastino
+ *          pagamento:
+ *           type: string
+ *           example: 1K63700664486650U
+ *          prezzo: 
+ *           type: string
+ *           example: 1.70
+ *         required:
+ *          - stazione_partenza
+ *          - stazione_arrivo
+ *          - viaggio
+ *          - data_viaggio
+ *          - nome
+ *          - cognome
  *    summary: Aggiunta biglietto richiesto
  *    description: viene inserito il nuovo biglietto scelto nella lista di biglietti acquistati
  *    responses:
@@ -175,7 +188,7 @@ app.post('/biglietti', async (request, response) => {
         return;
     }
 
-    if(data_viaggio.clone.add(moment.duration()))
+    if(data_viaggio.clone().add(moment.duration()))
 
     var viaggio = await database.collection("viaggi").findOne({
         _id : ObjectId(request.body.viaggio),
