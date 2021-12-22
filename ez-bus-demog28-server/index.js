@@ -187,19 +187,21 @@ app.post('/biglietti', async (request, response) => {
         response.send("Data non valida")
         return;
     }
+    console.log(request.body.viaggio)
 
     var viaggio = await database.collection("viaggi").findOne({
-        _id : ObjectId(request.body.viaggio),
-        fermate : { $elemMatch: {stazione : ObjectId(request.query.stazione_partenza)}},
-        fermate : { $elemMatch: {stazione : ObjectId(request.query.stazione_arrivo)}}
+        _id : ObjectId(request.body.viaggio)
     })
+
+    console.log(viaggio)
+
     if(!viaggio){
         response.status(400)
         response.send("Viaggio non valido")
         return;
     }
 
-    if(data_viaggio.clone().add(moment.duration(trovaFermataInViaggio(viaggio, request.body.stazione_partenza).ora).isSameOrBefore(moment()))){
+    if(data_viaggio.clone().add(moment.duration(trovaFermataInViaggio(viaggio, request.body.stazione_partenza).ora)).isSameOrBefore(moment())){
         response.status(400)
         response.send("Data del viaggio già passata")
         return;
