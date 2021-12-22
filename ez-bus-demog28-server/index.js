@@ -155,7 +155,7 @@ app.get('/stazioni', (request, response) => {
  *      description: errore per dati non completi, dati non validi, viaggio non valido
  */
 app.post('/biglietti', async (request, response) => {
-    if(!request.body.stazione_partenza || !request.body.stazione_arrivo || !request.body.viaggio || !request.body.nome || !request.body.cognome || !request.body.prezzo || !request.body.pagamento){
+    if(!request.body.stazione_partenza || !request.body.stazione_arrivo || !request.body.viaggio || !request.body.nome || !request.body.cognome){
         response.status(400)
         response.send("Dati non completi")
         return;
@@ -199,8 +199,8 @@ app.post('/biglietti', async (request, response) => {
         data_viaggio: data_viaggio.format("YYYY-MM-DD"),
         stazione_partenza: ObjectId(request.body.stazione_partenza),
         stazione_arrivo: ObjectId(request.body.stazione_arrivo),
-        pagamento: request.body.pagamento,
-        prezzo: request.body.prezzo,
+        pagamento: request.body.pagamento??null,
+        prezzo: request.body.prezzo??0.0,
         intestatario : {
             nome: request.body.nome,
             cognome: request.body.cognome,
@@ -243,6 +243,16 @@ app.delete('/biglietti/:id', async (request, response) => {
 
     if(biglietto)
     {
+        if(!biglietto.pagamento){
+            database.collection("biglietti_acquistati").deleteOne({
+                _id: ObjectId(request.params.id)
+            })
+
+            response.status(200);
+            response.send("Biglietto eliminato, informazioni per il rimborso non trovate")
+        }
+
+
         const pprequest = new checkoutNodeJssdk.payments.CapturesRefundRequest(biglietto.pagamento);
         pprequest.requestBody({
             amount: {
@@ -264,7 +274,8 @@ app.delete('/biglietti/:id', async (request, response) => {
             return;
         }
 
-        response.sendStatus(200);
+        response.status(200);
+        response.send("Biglietto rimborsato e eliminato")
     }
     else{
         response.status(400)
