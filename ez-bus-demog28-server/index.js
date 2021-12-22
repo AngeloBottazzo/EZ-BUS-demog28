@@ -181,7 +181,7 @@ app.post('/biglietti', async (request, response) => {
         return;
     }
     
-    let data_viaggio = moment(request.query.data_viaggio, moment.ISO_8601)
+    let data_viaggio = moment(request.body.data_viaggio, moment.ISO_8601)
     if (!data_viaggio.isValid()) {
         response.status(400);
         response.send("Data mal formata")
