@@ -154,7 +154,7 @@ app.get('/stazioni', (request, response) => {
  *     400:
  *      description: errore per dati non completi, dati non validi, viaggio non valido
  */
-app.post('/biglietti', (request, response) => {
+app.post('/biglietti', async (request, response) => {
     if(!request.body.stazione_partenza || !request.body.stazione_arrivo || !request.body.viaggio || !request.body.nome || !request.body.cognome || !request.body.prezzo || !request.body.pagamento){
         response.status(400)
         response.send("Dati non completi")
@@ -168,20 +168,29 @@ app.post('/biglietti', (request, response) => {
         return;
     }
     
-    let data_viaggio = moment(request.body.data_viaggio);
-    if(!data_viaggio.isValid() || data_viaggio.startOf('day').isBefore(moment().startOf('day'))){
+    let data_viaggio = moment(request.body.data_viaggio).startOf('day')
+    if(!data_viaggio.isValid() || data_viaggio.isBefore(moment().startOf('day'))){
         response.status(400)
         response.send("Data non valida")
         return;
     }
 
-    if(!database.collection("viaggi").findOne({
+    if(data_viaggio.clone.add(moment.duration()))
+
+    var viaggio = await database.collection("viaggi").findOne({
         _id : ObjectId(request.body.viaggio),
         fermate : { $elemMatch: {stazione : ObjectId(request.query.stazione_partenza)}},
         fermate : { $elemMatch: {stazione : ObjectId(request.query.stazione_arrivo)}}
-    })){
+    })
+    if(!viaggio){
         response.status(400)
         response.send("Viaggio non valido")
+        return;
+    }
+
+    if(data_viaggio.clone().add(moment.duration(trovaFermataInViaggio(viaggio, request.body.stazione_partenza).ora).isSameOrBefore(moment()))){
+        response.status(400)
+        response.send("Data del viaggio già passata")
         return;
     }
 
@@ -476,14 +485,14 @@ app.get('/biglietti', (request, response) => {
  *     description: problema generato dall'errore nel reperire i viaggi possibili dalla stazione di partenza
  */
 app.get('/viaggi-tra-stazioni', (request, response) => {
-    let data_viaggio = moment(request.query.data_viaggio)
+    let data_viaggio = moment(request.query.data_viaggio).startOf('day')
     if (!('stazione_partenza' in request.query) || !('stazione_arrivo' in request.query) || !data_viaggio.isValid()) {
         response.status(400);
         response.send("Dati non completi")
         return;
     }
 
-    if(data_viaggio.startOf('day').isBefore(moment().startOf('day'))){
+    if(data_viaggio.isBefore(moment().startOf('day'))){
         response.status(400)
         response.send("Data non valida")
         return;
@@ -523,14 +532,22 @@ app.get('/viaggi-tra-stazioni', (request, response) => {
                     postiDisponibili--
                 }
             })
-            return {
+
+            if(data_viaggio.clone().add(moment.duration(viaggio.fermate[indexPartenza].ora)).subtract(5, 'minutes').isSameOrBefore(moment())){ //sottraggo 5 minuti per evitare che l'utente acquisti un biglietto che poi non potrà essere salvato perché passata l'ora di partenza
+                return []
+            }
+
+            return [{
                 ...viaggio,
                 posti_disponibili: postiDisponibili,
                 index_partenza: indexPartenza,
                 index_arrivo: indexArrivo,
                 prezzo: Math.round(((viaggio.fermate[indexArrivo].distanza - viaggio.fermate[indexPartenza].distanza)/50.0 + 1)*100)/100
-            }
+            }]
         }))
+
+        viaggiConPosti = viaggiConPosti.flat(1)
+        //console.log(viaggiConPosti)
 
         viaggiConPosti = viaggiConPosti.sort((a, b) => {
             return moment.duration(a.fermate[a.index_partenza].ora).asMilliseconds() - moment.duration(b.fermate[b.index_partenza].ora).asMilliseconds()

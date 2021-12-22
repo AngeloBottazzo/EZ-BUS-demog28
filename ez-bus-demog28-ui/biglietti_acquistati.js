@@ -79,7 +79,7 @@ const biglietti_acquistati = {
             router.push({name:"acquista-biglietto", params:{biglietto:this.biglietto}})
         },
         passato(biglietto) {
-            return moment(biglietto.data_viaggio).isAfter(moment()); 
+            return moment(biglietto.data_partenza).isAfter(moment()); 
         }
     },
     mounted: function () {
