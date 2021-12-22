@@ -145,7 +145,7 @@ app.get('/stazioni', (request, response) => {
  *           example: Pastino
  *          pagamento:
  *           type: string
- *           example: 1K63700664486650U
+ *           example: 
  *          prezzo: 
  *           type: string
  *           example: 1.70
