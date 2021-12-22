@@ -109,12 +109,17 @@ methods: {
         if(!(this.stazione_partenza && this.stazione_arrivo && this.data_viaggio))
             return
         
-        let data_viaggio = moment(this.data_viaggio)
+        let data_viaggio = moment(this.data_viaggio, moment.ISO_8601)
 
-        if(!data_viaggio.isValid() || data_viaggio.startOf('day').isBefore(moment().startOf('day'))){
+        if(!data_viaggio.isValid()){
+            this.statoData = "La data non è valida."
+            return
+        }
+        else if(data_viaggio.startOf('day').isBefore(moment().startOf('day'))){
             this.statoData = "La data non dev'essere già trascorsa."
             return
-        }else{
+        }
+        else{
             this.statoData = ''
         }
 
