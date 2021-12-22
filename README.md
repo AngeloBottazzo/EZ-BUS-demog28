@@ -25,3 +25,7 @@ Nella schermata di acquisto biglietto l'utente deve compilare un form inserendo 
 Nella pagina di acquisto l'utente ha la possibilità di visualizzare il prezzo del biglietto, accettare i termini e condizioni e infine pagare il biglietto.
 ### Biglietti acquistati
 Nella schermata è possibile vedere i biglietti acquistati dall'utente
+
+#### Account paypal di prova
+<strong>Email:</strong> sb-x8asd10536914@personal.example.com
+<strong>Password:</strong> C1>Dd1Dt

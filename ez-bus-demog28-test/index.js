@@ -22,7 +22,7 @@ server.connettiDatabaseEPrendiApp().then((app)=>{
                 "stazione_partenza": "61ab9eb31e607d0f2cce7c58",
                 "stazione_arrivo": "61aba0b31e607d0f2cce7c68",
                 "viaggio": "61b3f64ece9723f367f3a842",
-                "data_viaggio": "2021-12-23",
+                "data_viaggio": "2022-01-20",
                 "nome": "Gino",
                 "cognome": "Pastino"
             })

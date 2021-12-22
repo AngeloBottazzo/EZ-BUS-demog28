@@ -155,7 +155,8 @@ app.get('/stazioni', (request, response) => {
  *      description: errore per dati non completi, dati non validi, viaggio non valido
  */
 app.post('/biglietti', (request, response) => {
-    if(!request.body.stazione_partenza || !request.body.stazione_arrivo || !request.body.viaggio || !request.body.nome || !request.body.cognome || !request.body.prezzo || !request.body.pagamento){
+    if(!request.body.stazione_partenza || !request.body.stazione_arrivo || !request.body.viaggio || !request.body.nome || 
+        !request.body.cognome || !request.body.prezzo || !request.body.pagamento){
         response.status(400)
         response.send("Dati non completi")
         return;
