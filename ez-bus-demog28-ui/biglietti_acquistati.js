@@ -7,7 +7,7 @@ const biglietti_acquistati = {
     <div class="container">
         <transition-group name="lista-biglietti" tag="div" class="row" style="position:relative">
             <div v-for="biglietto in biglietti" :key="biglietto._id" class="col col-12 col-lg-6 px-2 p-2">
-                <button data-bs-toggle="modal" data-bs-target="#modalImpostazioniBiglietto" type="button" :class="[passato(biglietto)? 'btn-success': 'btn-secondary', 'btn', 'container']" v-on:click="apriPopup(biglietto)">
+                <button :disabled="eliminazioneInCorso" data-bs-toggle="modal" data-bs-target="#modalImpostazioniBiglietto" type="button" :class="[passato(biglietto)? 'btn-success': 'btn-secondary', 'btn', 'container']" v-on:click="apriPopup(biglietto)">
                     {{biglietto.info_stazione_partenza.nome}}: {{ $root.dataOraBreve(biglietto.data_partenza) }} <br>
                     {{biglietto.info_stazione_arrivo.nome}}: {{ $root.dataOraBreve(biglietto.data_arrivo) }} <br>
                     {{$root.formattaPrezzo(biglietto.prezzo)}}
@@ -48,7 +48,8 @@ const biglietti_acquistati = {
     data() {
         return{
             biglietti: [],
-            biglietto:null
+            biglietto:null,
+            eliminazioneInCorso: false
         }
     },
     methods: {
@@ -62,12 +63,17 @@ const biglietti_acquistati = {
             this.biglietto = biglietto;
         },
         rimborso() {
+            this.eliminazioneInCorso = true
             axios.delete(variables.API_URL + "biglietti/" + this.biglietto._id)
                 .then((response) => {
                     this.refreshData();
                 }) .catch(function (error) {
-                    console.log(error);
-                });
+                    console.log(error)
+                    alert(error)
+                })
+                .then(()=>{
+                    this.eliminazioneInCorso = false
+                })
         },
         autoFill() {
             router.push({name:"acquista-biglietto", params:{biglietto:this.biglietto}})

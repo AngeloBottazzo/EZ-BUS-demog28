@@ -19,6 +19,7 @@
   },
   "homepage": "https://github.com/AngeloBottazzo/EZ-BUS-demog28#readme",
   "dependencies": {
+    "@paypal/checkout-server-sdk": "^1.0.3",
     "cors": "^2.8.5",
     "express": "^4.17.2",
     "moment": "^2.29.1",

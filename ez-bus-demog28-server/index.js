@@ -1,6 +1,8 @@
 var Express = require("express");
 const moment = require('moment');
 const credentials = require('../credentials');
+const checkoutNodeJssdk = require('@paypal/checkout-server-sdk');
+const payPalClient = require('./paypal_client_setup');
 
 var app = Express();
 
@@ -46,7 +48,8 @@ app.use(cors())
 var MongoClient = require("mongodb").MongoClient;
 const { urlencoded } = require('express');
 const { ObjectId } = require('mongodb');
-var CONNECTION_STRING = "mongodb+srv://" + credentials.username + ":" + credentials.password + "@cluster0.rrla8.mongodb.net/ezbusdev?retryWrites=true&w=majority"
+const res = require("express/lib/response");
+var CONNECTION_STRING = "mongodb+srv://" + credentials.db_username + ":" + credentials.db_password + "@cluster0.rrla8.mongodb.net/ezbusdev?retryWrites=true&w=majority"
 
 
 var DATABASE = "ezbusdev";
@@ -223,13 +226,42 @@ app.post('/biglietti', (request, response) => {
  *       text/plain:
  *        example: Bad Request
  */
-app.delete('/biglietti/:id', (request, response) => {
+app.delete('/biglietti/:id', async (request, response) => {
 
-    database.collection("biglietti_acquistati").deleteOne({
+    var biglietto = await database.collection("biglietti_acquistati").findOne({
         _id: ObjectId(request.params.id)
-    });
+    })
 
-    response.sendStatus(200);
+    if(biglietto)
+    {
+        const pprequest = new checkoutNodeJssdk.payments.CapturesRefundRequest(biglietto.pagamento);
+        pprequest.requestBody({
+            amount: {
+                currency_code: 'EUR',
+                value: parseFloat((biglietto.prezzo??0/ 2.0)).toFixed(2)
+            }
+        });
+        var refund;
+        try {
+            refund = await payPalClient.client().execute(pprequest);
+
+            database.collection("biglietti_acquistati").deleteOne({
+                _id: ObjectId(request.params.id)
+            })
+        } catch (err) {
+            response.status(500)
+            console.error(err)
+            response.send(err)
+            return;
+        }
+
+        response.sendStatus(200);
+    }
+    else{
+        response.status(400)
+        response.send("Biglietto non trovato")
+    }
+
 })
 
 function trovaFermataInViaggio(viaggio, stazione) {
