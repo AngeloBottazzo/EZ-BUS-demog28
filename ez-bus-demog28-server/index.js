@@ -193,8 +193,6 @@ app.post('/biglietti', async (request, response) => {
         _id : ObjectId(request.body.viaggio)
     })
 
-    console.log(viaggio)
-
     if(!viaggio){
         response.status(400)
         response.send("Viaggio non valido")

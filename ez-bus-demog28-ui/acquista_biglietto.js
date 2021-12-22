@@ -135,7 +135,6 @@ methods: {
         })
         .then((response) => {
             if(this.richiesta_viaggi == richiesta_viaggi_ora){
-                console.log(response)
                 this.viaggi = response.data;
             }
             
@@ -162,7 +161,6 @@ methods: {
                 // This function captures the funds from the transaction.
                 return actions.order.capture().then(function (details) {
                     // This function shows a transaction success message to your buyer.
-                    console.log(details)
                     
                     axios.post(variables.API_URL + "biglietti", {
                         nome: vueComponent.nome,
