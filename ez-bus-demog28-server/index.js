@@ -261,6 +261,7 @@ app.delete('/biglietti/:id', async (request, response) => {
 
             response.status(200);
             response.send("Biglietto eliminato, informazioni per il rimborso non trovate")
+            return
         }
 
 
